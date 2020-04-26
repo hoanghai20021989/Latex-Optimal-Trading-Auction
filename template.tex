@@ -11,7 +11,6 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
-\usepackage{lipsum}
 
 % Packages that are not related to the template
 \usepackage{natbib}
@@ -37,7 +36,6 @@
 
 \title{Optimal liquidation strategy in a mixed call auction and continuous auction market}
 
-
 \author{
  Tran Hoang Hai \\
  Department of Statistics \& Applied Probability\\
@@ -61,7 +59,6 @@
   We analyze the price impact of trading in a mixed auction market, in which the exchange employs both call auction and continuous auction. Based on a multiplayer game settings between a market maker and one or many liquidity takers, we derive a market impact model characterizes both instantaneous and temporary price impact. Our first main result is that, under certain assumptions, the impact of trading in a call auction can be significantly lowered than trading an equivalent quantity in a continuous auction. Our second main result is that, based on our market impact model, there is an optimal trading strategy with closed-form solution to liquidate a portfolio under both auctions. We furthermore analyze the optimal trading strategy numerically to show the cost efficiency of trading in both auctions compared to trading only in continuous trading auction.
 \end{abstract}
 
-
 \section{Introduction}
 In financial markets, double auction is a standard process of buying and selling shares with multiple sellers and multiple buyers. From an economist's perspective, an auction can be considered a price discovery process, where a competitive equilibrium price is found through interactions among bidders. The price is usually assumed to be the point where supply and demand are equal. The question of how the price reaches its equilibrium points, and how different players use their own information advantages to achieve a preferable price, has attracted researchers from various fields. \cite{Kyle1985} studies how market makers, insider traders and noise traders interact to form an equilibrium price in a continuous trading auction. \cite{AlmgrenChriss2000} discusses how execution can be done optimally in a continuous trading phase under certain market impact assumptions. \cite{Avellaneda2008} derives an equilibrium price from the perspectives of a market maker to provide quotes in a continuous trading auction. This paper is in a similar vein, in which we discuss how price will reach its equilibrium price in a mixed auction market. By taking into account call auction, under different market impact assumptions, we derive the corresponding optimal liquidation strategy for a trader to unwind his position. We provide theoretical evidence that it is indeed cheaper to trade the call auction compared to the continuous auction. Specifically, we assume both instantaneous and temporary market impact in trading in a market that operates under two auction models:
 \begin{itemize}
@@ -70,7 +67,7 @@ In financial markets, double auction is a standard process of buying and selling
 \end{itemize}
 Most exchanges in the world starts the day with one call auction, and at least one continuous auction session. Works on optimal execution today focuses on minimizing the impact of trading during the continuous trading phase, which ignores the fact that the opening auction is usually very liquid and the matched volume represents a significant portion of daily trading volume. For executing a big block order with significant volume, call auctions are usually more preferable since the execution cost is lower and price recovery is faster, as shown in our analysis later. However, as the continuous trading phase is much longer, the total volume executed during the trading phase is still higher, which suggest a mixture solution is required. In this study, we derive the optimal trading solutions that executing trades to unwind a portfolio during both the call auction and continuous auction phases, under different assumptions on the market impact profile of a stock.
 
-This paper is organized as follows: Section (\ref{secReview}) reviews the literature, in terms of both optimal liquidation and empirical study of financial market's auctions. Section (\ref{secModel}) will present our optimal liquidation model. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
+This paper is organized as follows: Section (\ref{secReview}) reviews the literature, in terms of both optimal liquidation and empirical study of financial market's auctions. Section (\ref{secTheoreticalFramework}) will present the theoretical framework that we will use to optimize our trading strategy. Section (\ref{secModel}) will present our optimal liquidation model. Section (\ref{secSensitivityAnalysis}) will perform sensitivity analysis on different impact parameters of the theoretical framework to examine their effects on the optimal trading strategy and its cost efficiency. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
 
 \section{Literature review}\label{secReview}
 Historically, the transition from manual to automatic trading system around the world began from the early 80s to the late 90s, with Toronto (1977) being the first exchange to implement an electronic matching system. Other exchanges soon followed, including Tokyo (1982), Paris (1986) and Germany (1991). By the end of the 20th century, major exchanges around the world has shifted to electronic trading. Initially, exchanges operate in favor of a continuous trading market, in which orders are matched immediately through out the day. Continuous trading was deemed desirable because participants can transact immediately. However, as argued in (\cite{Economides1995}), a call auction may be preferred over a continuous trading auction under certain circumstances. Consequently, most exchange around the world soon implemented call auction sessions in addition to the main continuous trading session. By 2020, major exchanges around the world implement an opening call auction, follow by a continuous trading session and end the day with a closing call auction.
@@ -87,7 +84,7 @@ Therefore, it is reasonable to expect significant cost reduction when trading du
 
 On the other hand, literature on optimal liquidation and market impact has rarely mentioned execution during call auctions. One of the first study on optimal liquidation is (\cite{HoStoll1981}), in which an optimal trading curve is derived under certain assumptions on stochastic trade arrival and price process. (\cite{AlmgrenChriss2000}) extends the model further by incorporating a trader's risk aversion factor when pricing for an optimal liquidation strategy. (\cite{Obizhaeva2013}) solves the problem under a different assumption: the impact of each trade recovers slowly instead of immediately. In terms of trading during a call auction, (\cite{Madhavan2015}) derives a optimal liquidation strategy for a specialist to set an equilibrium price under the assumptions of multiple traders with private information.
 
-\section{Theoretical framework}\label{auctionDesign}
+\section{Theoretical framework}\label{secTheoreticalFramework}
 In order to derive an optimal liquidation strategy in a mixed auction market, we must specify the auction mechanism for each session and how trading will impact the fair price of the market. We consider a market with two trading sessions in succession: a call auction session and a continuous trading session. The mechanism of each session, number of participants in each session and how their interaction affects the price of the underlying risky asset is described in the following subsections.
 \subsection{Call auction mechanism and the corresponding market impact}
 We assume the call auction is fully automated, and the matching mechanism is modelled after a Walrasian auction. Traders can submit and amend orders anytime during the call auction. However, those orders are not matched immediately, and placed into the book as "crossed", that is, the highest buy price is higher than the lowest sell price in the book (see Table (\ref{itayoseTable1}) for an example book during the call auction). At the end of the auction period, the orders in the book are matched based on an equilibrium price calculated by the exchange. The price is determined to maximize the volume traded in the call auction, and therefore has to satisfy the following requirements:
@@ -370,7 +367,7 @@ Using the boundary conditions:
 \[
   \hat{X_0} = Q_0 - V_0
 \]
-we have https://grasshopper.slack.com/archives/GLH87MSCS
+we have
 \[
   B = 0
 \]
@@ -461,6 +458,7 @@ Using a change of variables, we have
   \end{aligned}
 \]
 which can be combined as
+
 \[
   \begin{aligned}
     \Leftrightarrow \int_0^T {v'}_t  \left(V_0 \gamma_1 e^{-\rho t}
@@ -468,7 +466,9 @@ which can be combined as
     + 2 \eta_2 \hat{E_t} \right)dt=0
   \end{aligned}
 \]
-which means
+
+We then have
+
 \begin{equation}\label{optimize_eqb_all}
   \begin{aligned}
     \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}
@@ -476,8 +476,10 @@ which means
     + \hat{E_t} = C
   \end{aligned}
 \end{equation}
+
 for some constant $C$, using integration by parts and the natural boundaries conditions $v(0)=0$ and $v(T)=0$.
 Looking at Equation (\ref{optimize_eqb_all}), we can observe an interesting pattern: the optimal solution $\hat{E_t}$ is an optimization among three effects:
+
 \begin{itemize}
   \item The decay of the initial call auction trade during the continuous trading phase.
   \item The decay of the temporary impact during the continuous trading phase.
@@ -657,7 +659,8 @@ Although an analytic solution exists for $V_0$ that depends only on the market i
     \end{split}
   \]
 
-  We start with an initial guess of $V_0$, possibly from using one of the earlier analytic solutions. Initiate the following steps: \\
+  We start with an initial guess of $V_0$, possibly from using one of the earlier analytic solutions. Initiate the following steps: 
+
   \begin{itemize}
     \item Calculate $C$, $C_1$ and $C_2$ using the system of equations
 
@@ -705,6 +708,9 @@ Although an analytic solution exists for $V_0$ that depends only on the market i
     \item If $e<\epsilon$, return $\hat{V_0}$ and $E_t$ as solutions, else set $V_0=\hat{V_0}$ and repeat. The formula for $V_0$ has bounded first derivative, so it is guaranteed to converge in this fixed-point iteration algorithm (See, for example, \cite{Burden1989}).
   \end{itemize}
 \end{algorithm}
+
+\section{Sensitivity Analysis}\label{secSensitivityAnalysis}
+In this section, we will perform sensitivity analysis of the optimal solution regarding its impact parameters.
 
 \section{Conclusion}\label{secConclusion}
 We shows that there is an closed form optimal liquidation strategy in a mixed-auction market, under the classical assumptions of instantaneous, temporary and resilent market impact functional. We also shows that when the cost of trading in the call auction is comparable to the continuos trading phase, our strategy yields significant cost savings, even under the simplest assumptions of constant, instantaneous market impact only. Subsequent research on different forms of market impact under both auctions, and extending to multi-phase auction market, can be conducted in the future to yield more interesting findings.
