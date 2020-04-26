@@ -19,17 +19,7 @@
 \usepackage{amsmath}
 \usepackage{systeme}
 \usepackage[thinc]{esdiff}
-\DeclareMathOperator{\sech}{sech}
-\DeclareMathOperator{\csch}{csch}
-\DeclareMathOperator{\arcsec}{arcsec}
-\DeclareMathOperator{\arccot}{arcCot}
-\DeclareMathOperator{\arccsc}{arcCsc}
-\DeclareMathOperator{\arccosh}{arcCosh}
-\DeclareMathOperator{\arcsinh}{arcsinh}
-\DeclareMathOperator{\arctanh}{arctanh}
-\DeclareMathOperator{\arcsech}{arcsech}
-\DeclareMathOperator{\arccsch}{arcCsch}
-\DeclareMathOperator{\arccoth}{arcCoth} 
+
 
 \newtheorem{definition}{Definition}
 \newtheorem{algorithm}{Algorithm}
@@ -223,7 +213,7 @@ From Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), it is r
 \[
   S_t = S_0 + \int_0^t \sigma dZ_s
 \]
-that is, $S_t$ follows a classical arithmetic random walk without any drift The actual price process $P_t$ is then the combination of the fundamental price process $S_t$ and a short term deviation process $D_t$ due to the market maker repricing his book, as described in Section (\ref{auctionDesign}). We then have:
+that is, $S_t$ follows a classical arithmetic random walk without any drift The actual price process $P_t$ is then the combination of the fundamental price process $S_t$ and a short term deviation process $D_t$ due to the market maker repricing his book, as described in Section (\ref{secTheoreticalFramework}). We then have:
 \[
   P_t = S_t + D_t
 \]
@@ -272,7 +262,7 @@ In this section, we derive optimal solutions for liquidation in a mixed auction 
   \item $V_0=Q_0 - \int_0^T E_s ds$ is the size of the block trade executed at the end of the call auction.
 \end{itemize}
 
-From Section (\ref{auctionDesign}), we can see that there are two types of market impact during both auction that we need to account for in designing an optimal liquidation strategy for a liquidity trader. The first market impact type is the instantaneous cost factor of executing a trade during both auction. The second type of market impact is temporary, representing the inventory management of the market maker. Firstly, we assume that after each trade during both auctions, the asset is liquid enough that there are no temporary impact. From both Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that this term is a linear fraction of the trade size. Let
+From Section (\ref{secTheoreticalFramework}), we can see that there are two types of market impact during both auction that we need to account for in designing an optimal liquidation strategy for a liquidity trader. The first market impact type is the instantaneous cost factor of executing a trade during both auction. The second type of market impact is temporary, representing the inventory management of the market maker. Firstly, we assume that after each trade during both auctions, the asset is liquid enough that there are no temporary impact. From both Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that this term is a linear fraction of the trade size. Let
 \begin{itemize}
   \item $\eta_1$ be the instantaneous cost factor of executing the block trade at the end of the call auction.
   \item $\eta_2$ be the instantaneous cost factor of executing the trades during the continuous auction.
