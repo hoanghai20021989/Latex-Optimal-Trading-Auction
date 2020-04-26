@@ -60,29 +60,36 @@ Most exchanges in the world starts the day with one call auction, and at least o
 This paper is organized as follows: Section (\ref{secReview}) reviews the literature, in terms of both optimal liquidation and empirical study of financial market's auctions. Section (\ref{secTheoreticalFramework}) will present the theoretical framework that we will use to optimize our trading strategy. Section (\ref{secModel}) will present our optimal liquidation model. Section (\ref{secSensitivityAnalysis}) will perform sensitivity analysis on different impact parameters of the theoretical framework to examine their effects on the optimal trading strategy and its cost efficiency. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
 
 \section{Literature review}\label{secReview}
-Historically, the transition from manual to automatic trading system around the world began from the early 80s to the late 90s, with Toronto (1977) being the first exchange to implement an electronic matching system. Other exchanges soon followed, including Tokyo (1982), Paris (1986) and Germany (1991). By the end of the 20th century, major exchanges around the world has shifted to electronic trading. Initially, exchanges operate in favor of a continuous trading market, in which orders are matched immediately through out the day. Continuous trading was deemed desirable because participants can transact immediately. However, as argued in (\cite{Economides1995}), a call auction may be preferred over a continuous trading auction under certain circumstances. Consequently, most exchange around the world soon implemented call auction sessions in addition to the main continuous trading session. By 2020, major exchanges around the world implement an opening call auction, follow by a continuous trading session and end the day with a closing call auction.
 
-The adoption of the call auctions has resulted in substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. \cite{Madhavan2015} found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of average trade value. \cite{Bruno1999} also found similar phenomenon on the Paris Bourse, in which the opening auction auction accounts for about 10 percent of average daily trade value. \cite{Carole2006} has a similar conclusion regarding the Australian Stock Exchange (ASX).
+Historically, the transition from manual to automatic trading system around the world began from the early 80s to the late 90s, with Toronto (1977) being the first exchange to implement an electronic matching system. Other exchanges soon followed, including Tokyo (1982), Paris (1986) and Germany (1991). By the end of the 20th century, major exchanges around the world have shifted to electronic trading. Initially, exchanges operate in favor of a continuous trading market, in which orders are matched instantly through out the day. Continuous trading was deemed desirable because participants can transact immediately. However, as argued in (\cite{Economides1995}), a call auction may be preferred over a continuous trading auction under certain circumstances. Consequently, most exchanges around the world implemented call auction sessions in addition to the continuous trading session. By 2020, major exchanges around the world implement mixed auction mechansim with an opening call auction, followed by a continuous trading session and end the day with a closing call auction.
 
-A call auction can lower execution costs for participants and improve price discovery process, as suggested in (\cite{Pagano2003}). The reduction in trading costs, such as market impact and adverse selection costs, is achieved through several means, including (\cite{Carole2006}):
+The adoption of the call auctions has resulted in substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. (\cite{Madhavan2015}) found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of the average trade value. (\cite{Bruno1999}) found similar phenomenon on the Paris Bourse, in which the opening auction accounts for about 10 percent of average daily trade value. (\cite{Carole2006}) has a similar conclusion regarding the Australian Stock Exchange (ASX).
+
+A call auction can lower execution costs for participants and improve price discovery process, as suggested in (\cite{Pagano2003}). The reduction in trading costs, such as market impact and adverse selection costs, is achieved through several channels, including (\cite{Carole2006}):
+
 \begin{itemize}
   \item Temporal consolidation of order flow and execution of orders at a single price (\cite{Economides1995}).
   \item Facilitation of price discovery process during times of market stress (\cite{Madhavan1992}).
 \end{itemize}
 
-Therefore, it is reasonable to expect significant cost reduction when trading during the call auctions, and various studies has suggested that there are significant strategic trading activities during the call auctions. (\cite{Bruno1999}) suggests that the fluctuation in the indicative price during the call auction period maybe due to strategic trading. (\cite{Vives2001}) argues that large market makers may have incentives to trade during the opening call auction, to mitigate information leakage.
+Various studies have found that there are significant strategic trading activities during the call auctions. (\cite{Bruno1999}) suggests that the fluctuation in the indicative price during the call auction period maybe due to strategic trading. (\cite{Vives2001}) argues that large market makers may have incentives to trade during the opening call auction, to mitigate information leakage.
 
-On the other hand, literature on optimal liquidation and market impact has rarely mentioned execution during call auctions. One of the first study on optimal liquidation is (\cite{HoStoll1981}), in which an optimal trading curve is derived under certain assumptions on stochastic trade arrival and price process. (\cite{AlmgrenChriss2000}) extends the model further by incorporating a trader's risk aversion factor when pricing for an optimal liquidation strategy. (\cite{Obizhaeva2013}) solves the problem under a different assumption: the impact of each trade recovers slowly instead of immediately. In terms of trading during a call auction, (\cite{Madhavan2015}) derives a optimal liquidation strategy for a specialist to set an equilibrium price under the assumptions of multiple traders with private information.
+On the other hand, literature on optimal liquidation and market impact has rarely mentioned execution during call auctions, not to mention the mixed auction environment. One of the first study on optimal liquidation is (\cite{HoStoll1981}), in which an optimal trading curve is derived under certain assumptions on stochastic trade arrival and price process. (\cite{AlmgrenChriss2000}) extends the model further by incorporating a trader's risk aversion factor when pricing for an optimal liquidation strategy. (\cite{Obizhaeva2013}) solves the problem under a different assumption: the impact of each trade recovers slowly instead of immediately. These works are derived for continuous auction. In terms of trading during a call auction, (\cite{Madhavan2015}) derives a optimal liquidation strategy for a specialist to set an equilibrium price under the assumptions of multiple traders with private information.
 
 \section{Theoretical framework}\label{secTheoreticalFramework}
+
 In order to derive an optimal liquidation strategy in a mixed auction market, we must specify the auction mechanism for each session and how trading will impact the fair price of the market. We consider a market with two trading sessions in succession: a call auction session and a continuous trading session. The mechanism of each session, number of participants in each session and how their interaction affects the price of the underlying risky asset is described in the following subsections.
+
 \subsection{Call auction mechanism and the corresponding market impact}
-We assume the call auction is fully automated, and the matching mechanism is modelled after a Walrasian auction. Traders can submit and amend orders anytime during the call auction. However, those orders are not matched immediately, and placed into the book as "crossed", that is, the highest buy price is higher than the lowest sell price in the book (see Table (\ref{itayoseTable1}) for an example book during the call auction). At the end of the auction period, the orders in the book are matched based on an equilibrium price calculated by the exchange. The price is determined to maximize the volume traded in the call auction, and therefore has to satisfy the following requirements:
+
+We assume the call auction is fully automated, and the matching mechanism is modelled after a Walrasian auction. Traders can submit and amend orders anytime during the call auction. Those orders are not matched immediately, and placed into the book as "crossed", that is, the highest buy price is higher than the lowest sell price in the book (see Table (\ref{itayoseTable1}) for an example book during the call auction). At the end of the auction period, the orders in the book are matched based on an equilibrium price calculated by the exchange. The equilibrium price is determined to maximize the volume traded in the call auction, and therefore has to satisfy the following requirements:
+
 \begin{itemize}
   \item All buy/sell orders at prices higher/lower than the equilibrium price must be executed.
   \item At the execution price, the entire either buy or sell quantity must be matched.
 \end{itemize}
-Table (\ref{itayoseTable2}) gives an example of how a book can be "un-crossed" at the end of the call auctions. All the orders that are unmatched at the end of the call auction will be transferred to the continuous trading session. We assume there is no specialist who can step in to modify the equilibrium price. Some exchanges that adopt similar mechanism for the opening call auctions are Singapore Stock Exchange (SGX), Tokyo Stock Exchange (TSE) and Nasdaq Stock Market (NASDAQ). One special case is New York Stock Exchange (NYSE), in which a specialist sets the equilibrium price that is not necessarily the same as the volume-maximizing Walrasian price.
+
+Table (\ref{itayoseTable2}) gives an example of how a book can be "un-crossed" at the end of the call auctions. All the orders that are unmatched at the end of the call auction will be transferred to the continuous trading session. There is no specialist who can step in to modify the equilibrium price. This mechanism is adopted for the opening call auctions in Singapore Stock Exchange (SGX), and Tokyo Stock Exchange (TSE), Nasdaq Stock Market (NASDAQ). New York Stock Exchange (NYSE) is different, in which a specialist sets the equilibrium price that is not necessarily the same as the volume-maximizing Walrasian price.
 
 \begin{table}[]\label{itayoseTable1}
   \centering
@@ -97,7 +104,7 @@ Table (\ref{itayoseTable2}) gives an example of how a book can be "un-crossed" a
     10100              & 3000         & 53             &               &                     \\ \hline
   \end{tabular}
 
-  \caption{A sample crossed orderbook during call auction. The orders are matched at the equilibrium price of 54, which results in 2100 shares traded.}
+  \caption{A sample crossed orderbook during call auction. The orders will be matched at the equilibrium price of 54, which results in 2100 shares traded.}
 \end{table}
 
 
@@ -116,12 +123,14 @@ Table (\ref{itayoseTable2}) gives an example of how a book can be "un-crossed" a
   \caption{A sample orderbook at the end of the call auction.}
 \end{table}
 
-Inspired by the framework in (\cite{Madhavan2015}), we model the call auction as a two-stage game. Orders are submitted by traders in first stage of the game, during the call auction period.  In the second stage, the book is matched based on the Walrasian price described above. We assume that there are two types of traders:
+Inspired by the framework in (\cite{Madhavan2015}), we model the call auction as a two-stage game. Unlike (\cite{Madhavan2015}), we do not assume that there is a specialist setting the equilibrium price. We also do not assume that there are informed traders with information advantage, but a market maker who holds private information and make the market instead. Orders are submitted by traders in first stage of the game, during the call auction period. In the second stage, the book is matched based on the Walrasian price described above. We assume that there are two types of traders:
+
 \begin{itemize}
-  \item Market markers are those with private information about the value of the asset. This information is not necessary from possessing some insider knowledge about the asset, but from having access to superior information regarding the order flow of the book, such as real-time trades and quotes provided by the exchange and better data processing capability.
+  \item Market markers are those with private information about the value of the asset. This information is not necessary from possessing some insider knowledge about the asset, but from having access to superior information regarding the order flow of the book, such as real-time trades and quotes provided by the exchange and better data processing capability.  
   \item Liquidity traders are those without private information and simply want to execute their orders. Similar to previous studies, we assume the demands of liquidity traders are exogenous, and they trade using market orders.
 \end{itemize}
-For ease of analysis, we assume that there is only one market maker who makes the market for $K$ liquidity traders. Each of the liquidity traders will submit an order of size $x_i$, which follows normal distribution with zero mean and finite variance. The market maker is then assumed to  have the common negative exponential expected utility function of the form
+
+We further assume that there is only one market maker who makes the market for $K$ liquidity traders. Each of the liquidity traders will submit an order of size $x_i$, which follows normal distribution with zero mean and finite variance. The market maker is then assumed to  have the common negative exponential expected utility function of the form
 \[
   u(W_{eqb}) = -e^{-\lambda W_{eqb}}
 \]
@@ -438,7 +447,9 @@ where $\hat{X_t}$ and $\hat{E_t}$ are the optimal solution. Again, since we want
     + 2 \eta_2 \hat{E_t} {v'}_t  \right)dt=0
   \end{aligned}
 \]
+
 Using a change of variables, we have
+
 \[
   \begin{aligned}
     \Leftrightarrow \int_0^T \left( {v'}_t V_0 \gamma_1 e^{-\rho_1 t}
@@ -447,6 +458,7 @@ Using a change of variables, we have
     + 2 \eta_2 \hat{E_t} {v'}_t  \right)dt=0
   \end{aligned}
 \]
+
 which can be combined as
 
 \[
@@ -649,11 +661,10 @@ Although an analytic solution exists for $V_0$ that depends only on the market i
     \end{split}
   \]
 
-  We start with an initial guess of $V_0$, possibly from using one of the earlier analytic solutions. Initiate the following steps: 
+  We start with an initial guess of $V_0$, possibly from using one of the earlier analytic solutions. Initiate the following steps:
 
   \begin{itemize}
     \item Calculate $C$, $C_1$ and $C_2$ using the system of equations
-
           \[
             \systeme*{
               \syslineskipcoeff{1}
@@ -670,10 +681,8 @@ Although an analytic solution exists for $V_0$ that depends only on the market i
             \frac{dC}{dV_0} T = \frac{\frac{dC_2}{dV_0}}{kT} + 1 - \frac{(-1 + e^{-T \rho}) \gamma}{\eta_1 \rho} -  \frac{\frac{dC_2}{dV_0} \cosh{kT} + \frac{dC_1}{dV_0} \sinh{kT}}{k},
             \frac{dE_t'[V_0]}{dV_0}(0) = \rho \left[\frac{dC}{dV_0} - \frac{dE_t[V_0]}{dV_0}(0) - \frac{ \gamma}{2 \eta_2} \right],
             \frac{dE_t'[V_0]}{dV_0}(T) = \rho \left[\frac{dC}{dV_0} - \frac{dE_t[V_0]}{dV_0}(T) - \frac{ \gamma}{2 \eta_2} e^{-\rho T}\right]
-            }.
+            }
           \]
-
-
 
     \item Calculate new $\hat{V_0}$.
           \[
@@ -691,6 +700,7 @@ Although an analytic solution exists for $V_0$ that depends only on the market i
           \[
             F_2 = 2 \eta_1
           \]
+
     \item Calculate the residual
           \[
             e = (V_0 - \hat{V_0})/V_0
