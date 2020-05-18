@@ -193,9 +193,13 @@ Similar to the call auction, we model the continuous auction as a multi-round tw
   \item Unlike the call auction, only the market maker can submit limit orders during the first stage of the game. He has no knowledge of the liquidity trader's order, and only submit orders based on his own evaluation of the asset's value.
   \item The liquidity trader can only submit market orders during the final stage of the game, after the market maker has finished layering his orders in the book.
 \end{itemize}
-Under this mechanism, the market maker has a speed advantage with respect to the rest of the market, since he can evaluate the current fair pricing of the asset after each trade. After the reevaluation, he can modify his orders in the market to reflect the updated belief before any liquidity traders can place a new order. This grants the market maker distinct competitive advantage, in the sense that he can reprice his orders in the book before getting hit by any adverse selection event. This gives incentive to market makers to perform high frequency trading\footnote{This however does not mean the market maker is indomitable. An informed trader with higher precision signal poses an adverse selection risk to the market maker.}.
+Under this mechanism, the market maker has a speed advantage with respect to the rest of the market, since he can evaluate the current fair pricing of the asset after each trade. After the reevaluation, he can modify his orders in the market to reflect the updated belief before any liquidity traders can place a new order. This grants the market maker distinct competitive advantage, in the sense that he can reprice his orders in the book before getting hit by any adverse selection event. This gives incentive to market makers to perform high frequency trading.
 
-Similar to the call auction, we assume the market maker has private information about the asset. Again, let assume the immediate asset value at the end of the continuous auction's round is a random variable $v_c$ normally distributed with mean $\mu_c$ and precision $\zeta_c$. The market maker deduces his own evaluation with a private signal $\omega_c$, drawn from a Gaussian random varialbe with mean $v_c$ and precsion $\psi_c$. The market maker then forms a posterior belief on the asset value at the end of the round as a normal random variable with mean
+Similar to the call auction, we assume the market maker has private information about the asset. Again, let assume the immediate asset value at the end of the continuous auction's round is a random variable $v_c$ normally distributed with mean $\mu_c$ and precision $\zeta_c$. The market maker deduces his own evaluation with a private signal 
+\[
+  \omega_c \sim N(v_c, \frac{1}{\zeta_c})
+\]
+and forms a posterior belief on the asset value at the end of the round as a normal random variable with mean
 \[
   v_c=\mu_c \gamma + \omega_c(1 - \gamma)
 \]
@@ -220,7 +224,7 @@ where
 \[
   p_0 = \frac{a_c}{b_c}
 \]
-is the best price quoted by the market maker. Note that the sign is from the perspective of the market maker, that is, the higher number of shares the liquidity trader wants to buy, the higher markup price he will have to pay to transact immediately. In other words, the markup price that the liquidity trader receives is
+is the best price quoted by the market maker. Note that the position is from the perspective of the market maker, that is, the higher number of shares the liquidity trader wants to buy, the higher markup price he will have to pay to transact immediately. In other words, the markup price that the liquidity trader receives is
 \begin{equation}\label{markup_px_cont}
   p_{avg} = p_0 + \frac{1}{b_c} x_0
 \end{equation}
@@ -228,7 +232,8 @@ is the best price quoted by the market maker. Note that the sign is from the per
 Comparing Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that, ceteris paribus, the instantaneous market impact of trading during the auction phase has a higher chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes.
 
 \subsection{Market impact in a mixed auction market}
-Based on the behaviours of market makers, we can derive the market impact of trading for the liquidity trader. Let assume the fundamental price proces $S_t$ at time $t$ is given by
+
+Based on the behaviours of market makers, we can derive the market impact of trading for the liquidity trader. Suppose the fundamental price proces $S_t$ at time $t$ is given by
 \[
   S_t = S_0 + \int_0^t \sigma dZ_s
 \]
@@ -248,7 +253,7 @@ To incoporate resilence, we assume that, after each trade placed by the liquidit
 \[
   dD_t = \underbrace{\eta E_t}_\text{Cost of aggressing the book} + \underbrace{\gamma \int_0^t E_s e^{-\rho_2 (t-s)} ds}_\text{Residual cost of market resilence}
 \]
-Since we have both the call auction and the continuous auction, we can include both their impact in the short term deviation process $D_t$. The stock price of the asset during the continuous trading phase is then modelled as
+Since we have both the call auction and the continuous auction, we can include both their impact in the short term deviation process $D_t$. The stock price of the asset during the continuous trading phase is then represented as
 \begin{equation}\label{resilence_eqn}
   \begin{split}
     P_t = \underbrace{S_0}_{\text{Opening price}} + \underbrace{\eta_1 V_0}_\text{Cost of aggressing the book during call auction}
@@ -263,30 +268,30 @@ where
   \item $\rho_1$ and $\rho_2$ are the average liquidation speed of the positions acquired from trading $V_0$ and $E_t$ shares, respectively.
 \end{itemize}
 
-Consequently, we have a linear price impact with exponential resilience model, similar to (\cite{Obizhaeva2013}). It should be noted that, while theoretically tractable, those assumptions are not fully compatible with empirical works in the field. Empirically, it has been observed that the initial price impact is not linear, but rather concave (See, for example, (\cite{Eisler2009})). Similarly, it has been observed that the initial market impact decays more closely following a power-law function than an exponential one. Various works have been done to propose extending both terms to more general functions, such as (\cite{Alfonsi2010}). However, since the main contribution of the paper is to derive a optimal execution strategy in a mixed auction market, we can afford to make those simplifying assumptions to derive more tractable analysis. As shown in the next sections, those simplifying assumptions allow us to derive closed-form solutions under various assumptions of market impact profiles, which allows us to do sensitivity analysis of different impact factors on the model.
+This gives a linear price impact with exponential resilience model, similar to (\cite{Obizhaeva2013}). While theoretically tractable, some assumptions are not fully compatible with empirical works in the field. Empirically, it has been observed that the initial price impact is not linear, but rather concave (See, e.g. (\cite{Eisler2009})). It has also been observed that the initial market impact decays more closely following a power-law function than an exponential one. Various works have been done to extend both terms to more general functions, such as (\cite{Alfonsi2010}). However, since the main contribution of the paper is to derive an optimal execution strategy in a mixed auction market, we can afford to make those simplifying assumptions and the linear price impact with exponential resilence is a workable approximation. As shown in the next sections, those simplifying assumptions allow us to derive closed-form solutions under various assumptions of market impact profiles, which allows us to do sensitivity analysis of different impact factors on the model.
 
 \section{Optimal trading models in a mixed auction market}\label{secModel}
 
-In this section, we derive optimal solutions for liquidation in a mixed auction trading market based on the theoretical framework in Section (\ref{secTheoreticalFramework}). Let assume a trader wants to unwind a large position, and he has the option to exercise his trades in both the call auction and the continuous auction. We have:
+In this section, we derive optimal solutions for liquidation in a mixed auction trading market based on the theoretical framework in Section (\ref{secTheoreticalFramework}). There is a trader who wants to unwind a large position, and he has the option to exercise his trades in both the call auction and the continuous auction. We have:
 
 \begin{itemize}
   \item $Q_t$ be the total number of shares of his portfolio at time t.
-  \item $D_t=dQt$ be the continuous liquidation strategy that we employ during the continuous trading auction.
+  \item $D_t=dQ_t$ be the continuous liquidation strategy that we employ during the continuous trading auction.
   \item $X_t=\int_0^t E_s ds$ be remaining shares after $t$.
   \item $V_0=Q_0 - \int_0^T E_s ds$ is the size of the block trade executed at the end of the call auction.
 \end{itemize}
 
-From Section (\ref{secTheoreticalFramework}), we can see that there are two types of market impact during both auction that we need to account for in designing an optimal liquidation strategy for a liquidity trader. The first market impact type is the instantaneous cost factor of executing a trade during both auction. The second type of market impact is temporary, representing the inventory management of the market maker. Firstly, we assume that after each trade during both auctions, the asset is liquid enough that there are no temporary impact. From both Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that this term is a linear fraction of the trade size. Let
+From Section (\ref{secTheoreticalFramework}), we can see that there are two types of cost during both auction that we need to account for in designing an optimal liquidation strategy for a liquidity trader:
 \begin{itemize}
-  \item $\eta_1$ be the instantaneous cost factor of executing the block trade at the end of the call auction.
-  \item $\eta_2$ be the instantaneous cost factor of executing the trades during the continuous auction.
+  \item Initial cost of aggressing the orderbook.
+  \item Residual cost due to market resilence.
 \end{itemize}
 
-The total cost of trading is then
+Firstly, we consider the case that the asset is very liquid. As a result, the residual cost is almost zero, as the market maker can liquidate his position almost immediately. From Equation (\ref{markup_px_eqb}) and (\ref{markup_px_cont}), we can see that the total cost of trading is
 \[
   C =\eta_1  V_0^2 + \int_0^T \eta_2 E_s^2 ds
 \]
-Under the current assumptions, it has been shown that a TWAP is optimal during the continuous trading phase (\cite{AlmgrenChriss2000}), with the trading rate
+Given $V_0$, it has been shown that a TWAP is optimal during the continuous trading phase (\cite{AlmgrenChriss2000}), with the trading rate
 \[
   D_t = \frac{X_0 - V_0}{T}
 \]
