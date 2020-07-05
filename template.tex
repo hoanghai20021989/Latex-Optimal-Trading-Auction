@@ -20,6 +20,7 @@
 \usepackage{systeme}
 \usepackage[thinc]{esdiff}
 
+\graphicspath{ {./images/} }
 
 \newtheorem{definition}{Definition}
 \newtheorem{algorithm}{Algorithm}
@@ -27,14 +28,14 @@
 \title{Optimal liquidation strategy in a mixed call auction and continuous auction market}
 
 \author{
- Tran Hoang Hai \\
+ Hoang Hai Tran\\
  Department of Statistics \& Applied Probability\\
  National University of Singapore \\
  Lower Kent Ridge Road 10 \\
  119076 Singapore \\
  \texttt{e0045275@nus.edu.sg} \\
    \And
- Chen Ying \\
+ Ying Chen\\
  Department of Mathematics and Risk Management Institute \\
  National University of Singapore \\
  Lower Kent Ridge Road 10 \\
@@ -50,18 +51,13 @@
 \end{abstract}
 
 \section{Introduction}
-In financial markets, double auction is a standard process of buying and selling shares with multiple sellers and multiple buyers. From an economist's perspective, an auction can be considered a price discovery process, where a competitive equilibrium price is found through interactions among bidders. The price is usually assumed to be the point where supply and demand are equal. The question of how the price reaches its equilibrium points, and how different players use their own information advantages to achieve a preferable price, has attracted researchers from various fields. \cite{Kyle1985} studies how market makers, insider traders and noise traders interact to form an equilibrium price in a continuous trading auction. \cite{AlmgrenChriss2000} discusses how execution can be done optimally in a continuous trading phase under certain market impact assumptions. \cite{Avellaneda2008} derives an equilibrium price from the perspectives of a market maker to provide quotes in a continuous trading auction. This paper is in a similar vein, in which we discuss how price will reach its equilibrium price in a mixed auction market. By taking into account call auction, under different market impact assumptions, we derive the corresponding optimal liquidation strategy for a trader to unwind his position. We provide theoretical evidence that it is indeed cheaper to trade the call auction compared to the continuous auction. Specifically, we assume both instantaneous and temporary market impact in trading in a market that operates under two auction models:
+In modern financial markets, double auction is a standard process of buying and selling shares with multiple sellers and multiple buyers. From an economist's perspective, an auction can be considered a price discovery process, where a competitive equilibrium price is found through interactions among bidders. The price is usually assumed to be the point where supply and demand are equal. The question of how the price reaches its equilibrium points, and how different players use their own information advantages to achieve a preferable price, has attracted researchers from various fields. \cite{Kyle1985} studies how market makers, insider traders and noise traders interact to form an equilibrium price in a continuous trading auction. \cite{AlmgrenChriss2000} discusses how execution can be done optimally in a continuous trading phase under certain market impact assumptions. \cite{Avellaneda2008} derives an equilibrium price from the perspectives of a market maker to provide quotes in a continuous trading auction. This paper is in a similar vein, in which we discuss how price will reach its equilibrium price in a mixed auction market. By taking into account call auction, under different market impact assumptions, we derive the corresponding optimal liquidation strategy for a trader to unwind his position. We provide theoretical evidence that it is indeed cheaper to trade the call auction compared to the continuous auction. Specifically, we examine the impact of trading in a market that operates under two auction models:
 \begin{itemize}
   \item \textbf{Call auction} Buyers set a maximum price that they want to buy, and sellers set a minimum price that they want to sell. The orders will then be batched together and matched at a price set by the exchange.
   \item \textbf{Continuous auction} Orders are matched continuously based on time and price priority. Participants in the auction can choose to either queue their orders to wait for an opposing trade, or cross the book to match against other's orders.
 \end{itemize}
-Most exchanges in the world starts the day with one call auction, and at least one continuous auction session. Works on optimal execution today focuses on minimizing the impact of trading during the continuous trading phase, which ignores the fact that the opening auction is usually very liquid and the matched volume represents a significant portion of daily trading volume. For executing a big block order with significant volume, call auctions are usually more preferable since the execution cost is lower and price recovery is faster, as shown in our analysis later. A successful trading strategy should consider the design of market. The double auction mechanism suggests a mixed solution. In this study, we derive the optimal trading solutions that execute trades to unwind a portfolio during both the call auction and continuous auction phases, under different assumptions on the market impact profile of a stock.
 
-This paper is organized as follows: Section (\ref{secReview}) reviews the literature, in terms of both optimal liquidation and empirical study of financial market's auctions. Section (\ref{secTheoreticalFramework}) will present the theoretical framework that we will use to optimize our trading strategy. Section (\ref{secModel}) will present our optimal liquidation model. Section (\ref{secSensitivityAnalysis}) will perform sensitivity analysis on different impact parameters of the theoretical framework to examine their effects on the optimal trading strategy and its cost efficiency. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
-
-\section{Literature review}\label{secReview}
-
-Historically, the transition from manual to automatic trading system around the world began from the early 80s to the late 90s, with Toronto (1977) being the first exchange to implement an electronic matching system. Other exchanges soon followed, including Tokyo (1982), Paris (1986) and Germany (1991). By the end of the 20th century, major exchanges around the world have shifted to electronic trading. Initially, exchanges operate in favor of a continuous trading market, in which orders are matched instantly through out the day. Continuous trading was deemed desirable because participants can transact immediately. However, as argued in (\cite{Economides1995}), a call auction may be preferred over a continuous trading auction under certain circumstances. Consequently, most exchanges around the world implemented call auction sessions in addition to the continuous trading session. By 2020, major exchanges around the world implement mixed auction mechansim with an opening call auction, followed by a continuous trading session and end the day with a closing call auction.
+Historically, the debate of whether the call auction is required along with the continuous auction in the financial market started with the adoption of electronic trading. The transition from manual to automatic trading system around the world began from the early 80s to the late 90s, with Toronto (1977) being the first exchange to implement an electronic matching system. Other exchanges soon followed, including Tokyo (1982), Paris (1986) and Germany (1991). By the end of the 20th century, major exchanges around the world have shifted to electronic trading. Initially, exchanges operate in favor of a continuous trading market, in which orders are matched instantly through out the day. Continuous trading was deemed most suitable for electronic trading because participants can transact immediately. However, as argued in (\cite{Economides1995}), a call auction may be preferred over a continuous trading auction under certain circumstances. Consequently, most exchanges around the world implemented call auction sessions in addition to the continuous trading session. By 2020, major exchanges around the world implement mixed auction mechansim with an opening call auction, followed by a continuous trading session and end the day with a closing call auction.
 
 The adoption of the call auctions has resulted in substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. (\cite{Madhavan2015}) found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of the average trade value. (\cite{Bruno1999}) found similar phenomenon on the Paris Bourse, in which the opening auction accounts for about 10 percent of average daily trade value. (\cite{Carole2006}) has a similar conclusion regarding the Australian Stock Exchange (ASX).
 
@@ -76,13 +72,23 @@ Various studies have found that there are significant strategic trading activiti
 
 On the other hand, literature on optimal liquidation and market impact has rarely mentioned execution during call auctions, not to mention the mixed auction environment. One of the first study on optimal liquidation is (\cite{HoStoll1981}), in which an optimal trading curve is derived under certain assumptions on stochastic trade arrival and price process. (\cite{AlmgrenChriss2000}) extends the model further by incorporating a trader's risk aversion factor when pricing for an optimal liquidation strategy. (\cite{Obizhaeva2013}) solves the problem under a different assumption: the impact of each trade recovers slowly instead of immediately. These works are derived for continuous auction. In terms of trading during a call auction, (\cite{Madhavan2015}) derives a optimal liquidation strategy for a specialist to set an equilibrium price under the assumptions of multiple traders with private information.
 
-\section{Theoretical framework}\label{secTheoreticalFramework}
+Works on optimal execution today focuses more on minimizing the impact of trading during the continuous trading phase, which ignores the fact that the opening auction is usually very liquid and the matched volume represents a significant portion of daily trading volume. For executing a big block order with significant volume, call auctions are usually more preferable since the execution cost is lower and price recovery is faster, as shown in our analysis later. Specifically, based on our theoretical framework, we found that:
 
-In order to derive an optimal liquidation strategy in a mixed auction market, we must specify the auction mechanism for each session and how trading will impact the fair price of the market. We consider a market with two trading sessions in succession: a call auction session and a continuous trading session. The mechanism of each session, number of participants in each session and how their interaction affects the price of the underlying risky asset will be described in the following subsections.
+\begin{itemize}
+  \item There is a potentially large gain from liquidating portion of the position in the call auction, since the call auction may allow a liquidity trader to trade into the theoretical bid-ask spread.
+  \item Due to inventory management from the market maker, the transition period from the call auction will be characterized with a wide initial spread that will narrow over time. A mixed market strategy should account for this effect.
+  \item There is an optimal liquidation strategy to execute trade during both the call auction and the continuous auction that results in better cost optimization than trading in the continuous auction only.
+\end{itemize}
 
-\subsection{Call auction mechanism and the corresponding market impact}\label{subSecTheoreticalFrameworkCallAuction}
+This paper is organized as follows: Section (\ref{sec:AnalyticalFramework}) will present the theoretical framework that we will use to characterize the call auction and optimize our trading strategy. Section (\ref{sec:EmpiricalAnalysis}) will perform empirical analysis based on the theoretical framework to examine their effects on the optimal trading strategy and its cost efficiency. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
 
-We assume the call auction is fully automated, and the matching mechanism is modelled after a Walrasian auction. Traders can submit and amend orders anytime during the call auction. Those orders are not matched immediately, and placed into the book as "crossed", that is, the highest buy price is higher than the lowest sell price in the book (see Table (\ref{itayoseTable1}) for an example book during the call auction). At the end of the auction period, the orders in the book are matched based on an equilibrium price calculated by the exchange. The equilibrium price is determined to maximize the volume traded in the call auction, and therefore has to satisfy the following requirements:
+\section{The Analytical Framework}\label{sec:AnalyticalFramework}
+
+In order to derive an optimal liquidation strategy in a mixed auction market, we must first specify the auction mechanism for each session and how trading will impact the fair price of the market. We consider a market with two trading sessions in succession: a call auction session and a continuous trading session. The mechanism of each session, number of participants in each session and how their interaction affects the price of the underlying risky asset will be described, following by the market impact formula and the optimal liquidation strategy.
+
+\subsection{Call auction mechanism and agents' behaviours}\label{subsec:AnalyticalFrameworkCallAuction}
+
+In this section we will examine how different participants contribute to the price discovery process during the call auction. We assume the call auction is fully automated, and the matching mechanism is modelled after a Walrasian auction. Traders can submit and amend orders anytime during the call auction. Those orders are not matched immediately, and placed into the book as "crossed", that is, the highest buy price is higher than the lowest sell price in the book (see Table (\ref{itayoseTable1}) for an example book during the call auction). At the end of the auction period, the orders in the book are matched based on an equilibrium price calculated by the exchange. The equilibrium price is determined to maximize the volume traded in the call auction, and therefore has to satisfy the following requirements:
 
 \begin{itemize}
   \item All buy/sell orders at prices higher/lower than the equilibrium price must be executed.
@@ -128,7 +134,7 @@ Table (\ref{itayoseTable2}) gives an example of how a book can be "un-crossed" a
 Inspired by the framework in (\cite{Madhavan2015}), we model the call auction as a two-stage game. Orders are submitted by traders in first stage of the game, during the call auction period. In the second stage, the book is matched based on the Walrasian price described above. We assume that there are two types of traders:
 
 \begin{itemize}
-  \item Market markers are those with private information about the value of the asset. This information is not necessary from possessing some insider knowledge about the asset, but from having access to superior information regarding the order flow of the book, such as real-time trades and quotes provided by the exchange and better data processing capability.  
+  \item Market markers are those with private information about the value of the asset. This information is not necessary from possessing some insider knowledge about the asset, but from having access to superior information regarding the order flow of the book, such as real-time trades and quotes provided by the exchange and better data processing capability.
   \item Liquidity traders are those without private information and simply want to execute their orders. We assume the demands of liquidity traders are exogenous, and they trade using market orders.
 \end{itemize}
 
@@ -138,7 +144,7 @@ Unlike (\cite{Madhavan2015}), we do not assume that there is a specialist settin
   \item There are evidences that a significant portion of high frequency trading during is for liquidity provision. (\cite{Menkveld2013}) studied the trading activity in Chi-X Europe, and found that a majority of high frequency trading activities is market making. Similarly, \cite{Bellia2017} found that there is a correlation between low-latency trading and the subsequent liquidity provision in the call auction in Tokyo Stock Exchange (TSE).
 \end{itemize}
 
-We further assume that there is a single market maker who makes the market for $K$ liquidity traders. This can be either a designated market maker obligated to provide liquidity for the market, or an external agent who wants to capture the liquidity premium of the call auction. Each of the liquidity traders will submit an order of size $x_i$, which follows normal distribution with zero mean and finite variance. The market maker is then assumed to have a negative exponential expected utility function of the form
+We further assume that there is a single market maker who makes the market for $K$ liquidity traders. This can be either a designated market maker obligated to provide liquidity for the market, or an external agent who wants to capture the liquidity premium of the call auction. The market maker is then assumed to have a negative exponential expected utility function of the form
 \[
   u(W_e) = -e^{-\lambda W_e}
 \]
@@ -155,17 +161,17 @@ The notions are
   \item $e_e$ is the overnight position of the market maker.
   \item $q$ is number of shares purchased by the market maker at the end of the call auction.
 \end{itemize}
-To model the asset price at the end of the call auction, we assume that the asset value $p_0$ follows normal distribution with mean $\mu_e$ and precision (the inverse of the variance) $\zeta_e$. The private information of market maker $\omega_e$ is then the normal variable 
+To model the asset price at the end of the call auction, we assume that the asset value $p_0$ follows normal distribution with mean $\mu_e$ and precision (the inverse of the variance) $\zeta_e$. The private information of market maker $\omega_e$ is then the normal variable
 \[
-\omega_e \sim N(p_0, \frac{1}{\psi_e})
+  \omega_e \sim N(p_0, \frac{1}{\psi_e})
 \]
 The posterior distribution of the asset according to market maker's information set $\Omega_e$ is then normally distributed with mean
 \[
-  p_0=E[p_0|\Omega_e]=\mu_e \gamma + \omega_e(1 - \gamma)
+  p_0=E[p_0|\Omega_e]=\mu_e \alpha + \omega_e(1 - \alpha)
 \]
 where
 \[
-  \gamma = \frac{\zeta_e}{\zeta_e+\psi_e}
+  \alpha = \frac{\zeta_e}{\zeta_e+\psi_e}
 \]
 and variance
 \[
@@ -173,20 +179,26 @@ and variance
 \]
 Maximizing expected utility of the market maker, we have the amount of shares submitted
 \[
-  q(p) = a_e - b_e p_e
+  q(p) = a_e - b_e p
 \]
 where $a_e = \frac{p_0}{\lambda \sigma_e^2} - e_e$ and $b_e=\frac{1}{\lambda \sigma_e^2}$. We assume the $K$ liquidity traders will submit a total of $\sum_{i=0}^K x_i$ shares into the call auction to be matched, with negative values implying selling and vice versa. The total shares transacted at a given price $p$ is then
 \[
   Q(p) = (p_0 - p) b_e + \sum_{i=0}^K x_i
 \]
-At equilibrium, we set the avoe quantity to 0. This gives the Walrasian price as the matching price at the end of the call auction
+At equilibrium, we set $Q(p)$ to 0. This gives the Walrasian price as the matching price at the end of the call auction
 \begin{equation}\label{markup_px_eqb}
   p_e = p_0 + \frac{\sum_{i=0}^K x_i}{b_e}
 \end{equation}
-The matching price is the fair price of the stock with a mark-up in proportion to the number of shares transacted by the liquidity traders. We will use it to derive optimal liquidation strategy for a liquidity trader later.
+The matching price is the fair price of the stock with a mark-up in proportion to the supply-demand imbalance in the market. The pricing function is plotted in Figure (\ref{fig:mm_pricing_auction}), which we will use to price our market impact of trading with the call auction in subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}) after we examine the continuous trading phase in the next section.
 
-\subsection{Continuous auction mechanism and the corresponding market impact}\label{subSecTheoreticalFrameworkContinuousAuction}
-During the continuous trading session, Orders can be posted into the market at anytime during the auction and are matched when they arrived to the market. If a buy order has a price that is higher than the current lowest offer in the book, it will be matched immediately. Otherwise, it will be added into the book.
+\begin{figure}[h]
+  \includegraphics[width=\textwidth]{MMPricing}
+  \caption{Pricing function of the market maker w.r.t call auction imbalance. If the imbalance is negative, implying that the sell demand is higher than buy demand, the market maker will price the opening price to be lower than his fair price, and vice versa. The slope of the pricing function is $\frac{1}{b_e}$ in Equation (\ref{markup_px_eqb}). $V_e$ is the imbalance at the end of the call auction, while $p_e$ is the opening price. }
+  \label{fig:mm_pricing_auction}
+\end{figure}
+
+\subsection{Continuous auction mechanism and agents' behaviours}\label{subsec:AnalyticalFrameworkContinuousAuction}
+During the continuous trading session, orders can be posted into the market at anytime during the session and are matched immediately. If a buy order has a price that is higher than the current lowest offer in the book, it will be matched immediately, and vice versa for sell orders. Otherwise, they will be added into the book.
 
 Similar to the call auction, we model the continuous auction as a multi-round two-stage game. At the beginning of each round, we pick randomly a liquidity trader to act as the counterparty of the market maker. In the first stage of the round, the market maker place limit orders in the book according to his risk tolerance and private information. In the second stage, the liquidity trader will place a market order based on his exogenous demand. This setup is slightly different from the call auction in which:
 \begin{itemize}
@@ -195,17 +207,17 @@ Similar to the call auction, we model the continuous auction as a multi-round tw
 \end{itemize}
 Under this mechanism, the market maker has a speed advantage with respect to the rest of the market, since he can evaluate the current fair pricing of the asset after each trade. After the reevaluation, he can modify his orders in the market to reflect the updated belief before any liquidity traders can place a new order. This grants the market maker distinct competitive advantage, in the sense that he can reprice his orders in the book before getting hit by any adverse selection event. This gives incentive to market makers to perform high frequency trading.
 
-Similar to the call auction, we assume the market maker has private information about the asset. Again, let assume the immediate asset value at the end of the continuous auction's round is a random variable $v_c$ normally distributed with mean $\mu_c$ and precision $\zeta_c$. The market maker deduces his own evaluation with a private signal 
+Similar to the call auction, we assume the market maker has private information about the asset. Again, let assume the immediate asset value at the end of the continuous auction's round is a random variable $v_c$ normally distributed with mean $\mu_c$ and precision $\zeta_c$. The market maker deduces his own evaluation with a private signal
 \[
   \omega_c \sim N(v_c, \frac{1}{\zeta_c})
 \]
 and forms a posterior belief on the asset value at the end of the round as a normal random variable with mean
 \[
-  v_c=\mu_c \gamma + \omega_c(1 - \gamma)
+  v_c=\mu_c \alpha + \omega_c(1 - \alpha)
 \]
 where
 \[
-  \gamma = \frac{\zeta_c}{\zeta_c+\psi_c}
+  \alpha = \frac{\zeta_c}{\zeta_c+\psi_c}
 \]
 and variance
 \[
@@ -229,501 +241,318 @@ is the best price quoted by the market maker. Note that the position is from the
   p_{avg} = p_0 + \frac{1}{b_c} x_0
 \end{equation}
 
-Comparing Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that, ceteris paribus, the instantaneous market impact of trading during the auction phase has a higher chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes.
+Comparing Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that, ceteris paribus, the instantaneous market impact of trading during the auction phase has a higher chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes. This is clearer once we examine the transition period immediate after market opening in the next subsection.
 
-\subsection{Market impact in a mixed auction market}
+\subsection{Price discovery at market opening}\label{subsec:AnalyticalFrameworkTransitionPeriod}
 
-Based on the behaviours of market makers, we can derive the market impact of trading for the liquidity trader. Suppose the fundamental price proces $S_t$ at time $t$ is given by
+There are empirical evidence that the transition period immediate after market opening is crucial in determining the effectiveness of the opening call auction (\cite{Pagano2013}). In this subsection, we analyze how the market maker, and consequently the spread, may behave during this period, and the subsequent effects on the liquidity trader. Recalling from Equation (\ref{markup_px_eqb}), the opening price is marked up proportional to the buy-sell imbalance at the end of call auction. Let
+\[
+  V_e = \sum_{i=0}^K x_i
+\]
+be the imbalance at the end of call auction. Based on the imbalance, the market maker will provide the liquidity necessary for the market to open at price
+\[
+  p_e = p_0 + \frac{V_e}{b_e}
+\]
+Without loss of generality, let $V_e$ be positive, implying that the market has more buy interests than sell interests. The market maker will sell $V_e$ shares at price $p_e$ higher than his estimated fair value of $p_0$, and has an unrealized gain of
+\[
+  G_e = (p_0 - p_e) * V_e
+\]
+To capitalize this gain after market opening, the market maker will need to make a spread. Continuing from the call auction's we have the pricing function of the market maker during this period:
+\[
+  q(p) = a_e - b_e p
+\]
+where $a_e = \frac{p_0}{\lambda \sigma_e^2} - V_e$ and $b_e=\frac{1}{\lambda \sigma_e^2}$, based on his signal when pricing the call auction. As $V_e$ is positive, this means the market maker is willing to sell at $p_e$. On the other hand, it is reasonable to assume that he will want to liquidate his position acquired from the opening call auction at $p_0$, his fair price of the asset at the end of the call auction. Therefore, the market maker will make a spread of $\frac{V_e}{b_e}$ immediately after call auction. The quotes of the market maker are illustrated in Figure (\ref{fig:mm_pricing_transition}).
+
+\begin{figure}[h]
+  \includegraphics[width=\textwidth]{MMPricingTransition}
+  \caption{Market maker's quotes immediately after opening w.r.t call auction imbalance. Upon market opening, the market maker will short $V_e$ shares at $p_e$. His evaluation of the asset's fair value is at $p_0$. However, due to his inventory, he will quote the ask side further away at $p_e$, and bid side at $p_0$. The bid-ask spread is then $\frac{V_e}{b_e}$, based on the market maker's pricing function (\ref{markup_px_cont}).}
+  \label{fig:mm_pricing_transition}
+\end{figure}
+
+Interestingly, the bid-ask spread after market opens reveals the market impact of trading in the call auction. At first glance, due to the similarity of the pricing function during the call auction (Equation (\ref{markup_px_eqb})) and the continuous auction (Equation (\ref{markup_px_cont}), it seems like the market impact of trading in both phases is the same. In other words, if we execute $x$ number of shares, we will get an adverse price linearly proportional to $x$, and if the market maker's signal remains the same, the impact on the cost of trading will be the equal. However, this ignores the fact that during the auction phase, the liquidity trader has a chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes. Specifically, the liquidity trader will potentially face one of two scenarios during the call auction:
+
+\begin{itemize}
+  \item {\textbf{Scenario 1: The liquidity trader trades in the same direction as market imbalance}
+        As $V_e$, the buy-sell imbalance at the end of the call auction, is assumed to be positive, we have the liquidity trader wants to buy in this case. As a result, his block trade size of $B_0$ will push the opening ask up, from $p_e$ to
+        \[
+          p_{e+} =  p_0 + \frac{V_e + B_0}{b_e}
+        \]
+        As he is buying, this is equivalent to lifting the offer during the continuous phase. In this case, ceteris paribus, there is no difference between trading during the auction and trading during the continuous phase.
+
+        \begin{figure}[h]
+          \includegraphics[width=\textwidth]{MMPricingTransitionSameDir}
+          \caption{Bid-ask spread under Scenario 1, in which the liquidity trader trades in the same direction as the bid-ask imbalance. Consequently, he will push the ask price up, increase the cost of trading both in the call auction and the subsequent continuous phase.}
+          \label{fig:mm_pricing_transition}
+        \end{figure}
+        }
+  \item {
+        \textbf{Scenario 2: The liquidity trader trades against the market imbalance}
+        In this case, the liquidity trader will sell to the market, similar to the market maker. Therefore, he is providing liquidity to the market, reducing the bid-ask spread immediately after market opening. In other words, the opening price bid improves from $p_e$ to
+        \[
+          p_{e-} = p_0 + \frac{V_e - B_0}{b_e}
+        \]
+        As he is selling, this is equivalent to placing his offer into the bid-ask spread during the continuous phase and getting filled immediately.
+        \begin{figure}[h]
+          \includegraphics[width=\textwidth]{MMPricingTransitionDifferentDir}
+          \caption{Bid-ask spread under Scenario 2, in which the liquidity trader trades against the bid-ask imbalance. Consequently, he will pull the opening ask price down, while leave the opening bid at $p_0$. As he is selling, there is no impact on his cost of trading after market opening.}
+          \label{fig:mm_pricing_transition}
+        \end{figure}
+        }
+\end{itemize}
+The difference in execution prices between two scenarios is the bid-ask spread immediately after market opens, which is
+\[
+  \Delta_p = \frac{V_e}{b_e}
+\]
+and therefore is linearly proportional to the size of the imbalance during the call auction. Let assume the log size of the imbalance is distributed as
+\[
+  ln(|V_e|) \sim N(V_0, \sigma_{V_0})
+\]
+and there is equal chance of entering each scenario. We then have the expected cost difference, given the same block trade size and other factors, between executing in the call auction and during the continuous phase, is:
+\begin{equation}\label{eqn:expected_auction_saving}
+  E[\Delta p] =  \frac{e^{V_0}}{2 b_e}
+\end{equation}
+which shows that even with the same pricing functions, the cost of trading during the auction is smaller than during the continuous phase. Heuristically speaking, trading in the call auction offers the liquidity trader a chance equivalent to immediately getting filled into the spread during the continuous trading phase.
+
+Furthermore, as the market maker is buying at the fair price of $p_0$ and selling at a discounted price $p_e$, it is reasonable that he will get filled more on the bid side than the ask side. Under Scenario 2, this has no effect on the liquidity trader, as the liquidity trader will keep hitting the bid to sell while the market maker will try to improve the offer. However, under Scenario 1, this results in an ongoing penalty cost to the liquidity trader that will decay over time, as he will need to lift the offer to sell. Let the speed of liquidation of the market maker be $\rho$ and $V_t$ be the remaining position of the market maker acquired from the call auction in Scenario 1. Consequently, we have
+\[
+  dV_t = -\rho V_t
+\]
+\[
+  V_t[0]=V_e
+\]
+\[
+  \Leftrightarrow V_t = V_e e^{-\rho t}
+\]
+The resulting spread due to our trading during the call auction at time $t$ will be
+\begin{equation}\label{resilence_term}
+  \Delta p_t = \frac{e^{-\rho t}}{b_e}  V_e
+\end{equation}
+
+Therefore, we would expect the spread to be wide initially, and slowly closing due to the inventory management effects from the market maker. This is in aggrement with current empirical evidence that the bid-ask spread narrows shortly after market opens.
+
+\subsection{Optimal liquidation strategy in a mixed auction market}
+
+Based on the behaviors of market makers in the previous subsections, we can derive the market impact of trading for the liquidity trader in each of the session. Suppose the fundamental price proces $S_t$ at time $t$ is given by
 \[
   S_t = S_0 + \int_0^t \sigma dZ_s
 \]
-that is, $S_t$ follows a classical arithmetic random walk without any drift. The actual price process $P_t$ is then the combination of the fundamental price process $S_t$ and a short term deviation process $D_t$ due to the market maker repricing his book, as described in Subsection (\ref{subSecTheoreticalFrameworkCallAuction}) and (\ref{subSecTheoreticalFrameworkContinuousAuction}). 
+that is, $S_t$ follows a classical arithmetic random walk without any drift. The actual price process $P_t$ is then the combination of the fundamental price process $S_t$ and a short term deviation process $D_t$ due to the market maker repricing his book, as described in Subsection (\ref{subsec:AnalyticalFrameworkCallAuction}) and (\ref{subsec:AnalyticalFrameworkContinuousAuction}):
 
-From Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), it is reasonable to assume that $D_t$ will include a linear cost proportional to the trading size at time $t$:
+\[
+  P_t = S_t + D_t
+\]
+
+From Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), it is reasonable to assume that $D_t$ will include a linear cost component proportional to the trading sizes under each session:
 \begin{equation}\label{short_term_deviation}
-  D_t = E_t \eta
-\end{equation}
-where $E_t$ is the continuous trading rate of the liquidity trader, and $\eta$ is the cost penalty for aggressing the book. Equation (\ref{short_term_deviation}) is similar to what has been described as the "temporary impact" term in in the pioneering works of (\cite{BertimasLo1999}) and (\cite{AlmgrenChriss2000}). This however ignores the transient nature of market impact which is due to the resilience of the market. This resilience can be due to various reasons:
-\begin{itemize}
-  \item The natural order flow of the asset allows the market maker to liquidate his position and reprice his quotes more aggressively (\cite{Avellaneda2008}).
-  \item The initial signal of the market maker may account for a future herding flow, which is attenuated as time passes (\cite{Thibault2015})
-  \item There may be other venues to exit the position for the market maker, including dark pools, internal order flow and correlated assets. The market maker can take his profits in those venues, and reprice his quotes in the main asset accordingly.
-\end{itemize}
-To incoporate resilence, we assume that, after each trade placed by the liquidity trader, the market maker will need time to unwind a fraction of the remaining position. We can model this effect with another cost penalty term linearly proportional to the liquidity trader's size $\gamma$. We also assume that the market maker average liquidation speed is $\rho$ per time unit. The short term deviation term $D_t$ is then
-\[
-  dD_t = \underbrace{\eta E_t}_\text{Cost of aggressing the book} + \underbrace{\gamma \int_0^t E_s e^{-\rho_2 (t-s)} ds}_\text{Residual cost of market resilence}
-\]
-Since we have both the call auction and the continuous auction, we can include both their impact in the short term deviation process $D_t$. The stock price of the asset during the continuous trading phase is then represented as
-\begin{equation}\label{resilence_eqn}
-  \begin{split}
-    P_t = \underbrace{S_0}_{\text{Opening price}} + \underbrace{\eta_1 V_0}_\text{Cost of aggressing the book during call auction}
-    + \underbrace{\gamma_1 V_0 e^{-\rho_1 t}}_{\text{Resilence cost for call auction}}+ \\
-    \underbrace{\eta_2 E_t}_\text{Cost of aggressing the book during continuous auction} + \underbrace{\gamma_2 \int_0^t E_s e^{-\rho_2 (t-s)} ds}_{\text{Resilence cost for continuous auction}} +  \underbrace{\int_0^t \sigma dZ_s}_{\text{Intraday noise}}
-  \end{split}
+  D_t = \alpha B_0 + E_t \beta
 \end{equation}
 where
 \begin{itemize}
-  \item $\eta_1$ and $\eta_2$ are the initial impact factors resulting from trading $V_0$ and $E_t$ shares during the call auction and continuous auction, respectively.
-  \item $\gamma_1$ and $\gamma_2$ are the residual impact factors resulting from trading $V_0$ and $E_t$ shares during the call auction and continuous auction, respectively.
-  \item $\rho_1$ and $\rho_2$ are the average liquidation speed of the positions acquired from trading $V_0$ and $E_t$ shares, respectively.
+  \item $B_0$ is the block trade size at the end of the call auction
+  \item $E_t$ is the continuous trading rate of the liquidity trader
+  \item $\alpha$ and $\beta$ are the cost penalty factor for aggressing the book during the call auction and continuous auction, respectively. We have $\alpha=\frac{1}{b_e}$ and $\beta=\frac{1}{b_c}$ based on Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), respectively.
 \end{itemize}
+Equation (\ref{short_term_deviation}) is similar to what has been described as the "temporary impact" term in in the pioneering works of (\cite{BertimasLo1999}) and (\cite{AlmgrenChriss2000}). On the other hand, from Equation (\ref{resilence_term}), we have the expected spillover cost of trading during call auction to continuous phase is:
+\[
+  R_t = \alpha B_0 e^{-\rho t}
+\]
 
-This gives a linear price impact with exponential resilience model, similar to (\cite{Obizhaeva2013}). While theoretically tractable, some assumptions are not fully compatible with empirical works in the field. Empirically, it has been observed that the initial price impact is not linear, but rather concave (See, e.g. (\cite{Eisler2009})). It has also been observed that the initial market impact decays more closely following a power-law function than an exponential one. Various works have been done to extend both terms to more general functions, such as (\cite{Alfonsi2010}). However, since the main contribution of the paper is to derive an optimal execution strategy in a mixed auction market, we can afford to make those simplifying assumptions and the linear price impact with exponential resilence is a workable approximation. As shown in the next sections, those simplifying assumptions allow us to derive closed-form solutions under various assumptions of market impact profiles, which allows us to do sensitivity analysis of different impact factors on the model.
-
-\section{Optimal trading models in a mixed auction market}\label{secModel}
-
-In this section, we derive optimal solutions for liquidation in a mixed auction trading market based on the theoretical framework in Section (\ref{secTheoreticalFramework}). There is a trader who wants to unwind a large position, and he has the option to exercise his trades in both the call auction and the continuous auction. We have:
+The short term deviation term $D_t$ is then
+\[
+  D_t = \underbrace{\alpha B_0 }_\text{Cost of aggressing the book at the end of the call auction} +
+  \underbrace{\alpha B_0 e^{-\rho t}}_\text{Spillover cost from call auction} +  \underbrace{\beta E_t}_\text{Cost of aggressing the book during continuous auction}
+\]
+and the market impact cost of trading is
+\begin{equation}\label{cost_equation_all}
+  C_t = \alpha B_0^2 + \int_0^t \alpha B_0 e^{-\rho s} E_s ds + \int_0^t \beta E_s^2 ds
+\end{equation}
+which we can use to derive an optimal strategy for the liquidity trader. Let assume the liquidity trader wants to unwind a large position, and he has the option to exercise his trades in both the call auction and the continuous auction. We have the following notations regarding his trading strategy:
 
 \begin{itemize}
-  \item $Q_t$ be the total number of shares of his portfolio at time t.
-  \item $D_t=dQ_t$ be the continuous liquidation strategy that we employ during the continuous trading auction.
-  \item $X_t=\int_0^t E_s ds$ be remaining shares after $t$.
-  \item $V_0=Q_0 - \int_0^T E_s ds$ is the size of the block trade executed at the end of the call auction.
+  \item $Q_t$ is the total number of shares of his portfolio at time t.
+  \item $E_t$ is the continuous liquidation strategy during the continuous trading auction.
+  \item $X_t=\int_0^t E_s ds$ is remaining shares at time $t$.
+  \item $B_0=Q_0 - \int_0^T E_s ds$ is the size of the block trade executed at the end of the opening call auction.
 \end{itemize}
 
-From Section (\ref{secTheoreticalFramework}), we can see that there are two types of cost during both auction that we need to account for in designing an optimal liquidation strategy for a liquidity trader:
-\begin{itemize}
-  \item Initial cost of aggressing the orderbook.
-  \item Residual cost due to market resilence.
-\end{itemize}
-
-Firstly, we consider the case that the asset is very liquid. As a result, the residual cost is almost zero, as the market maker can liquidate his position almost immediately. From Equation (\ref{markup_px_eqb}) and (\ref{markup_px_cont}), we can see that the total cost of trading is
+The total cost of his strategy is
 \[
-  C =\eta_1  V_0^2 + \int_0^T \eta_2 E_s^2 ds
-\]
-Given $V_0$, it has been shown that a TWAP is optimal during the continuous trading phase (\cite{AlmgrenChriss2000}), with the trading rate
-\[
-  D_t = \frac{X_0 - V_0}{T}
-\]
-The cost of trading is therefore
-\[
-  U = \eta_1 V_0^2 + \eta_2 \frac{(X_0 - V_0)^2}{T}
-\]
-Taking the first derivative with respect to $V_0$, we have
-\[
-  V_0= X_0 \frac{\eta_2}{\eta_1 T +\eta_2}
-\]
-as the optimal block size executed during the auction call. The solution indicates that under the instant book recovery assumptions, which tend to be true if our portfolio is relatively small given a stock with decent liquidity, the call auction's block size is determined by the ratio the intraday impact factor compared to the call auction impact factor. Under this assumption, the cost of executing the portfolio is
-\[
-  C_{opt}  = X_0^2\left(\eta_1  \left[\frac{\eta_2}{\eta_1 T + \eta_2}\right]^2 + \frac{\eta_2}{T}  \left[\frac{\eta_1 T}{\eta_1 T + \eta_2}\right]^2 \right)
-\]
-On the other hand, if we only execute the portfolio during the continuous auction, the cost will be
-\[
-  C_c =  X_0^2 \frac{\eta_2}{T}
-\]
-The cost saving, compared to executing the whole portfolio during the continuous auction, is then:
-\[
-  \Delta C = X_0^2\left(\frac{\eta_2}{T}  \left\{1 - \left[ \frac{\eta_1 T}{\eta_1 T + \eta_2}\right]^2\right\} - \eta_1  \left[\frac{\eta_2}{\eta_1 T + \eta_2}\right]^2\right)
+  C = \alpha B_0^2  + \alpha \int_0^T B_0 e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
 \]
 
-On the other hand. let assume that after the call auction, the book only replenishes immediately up to a certain level, while leaves the mid-price with a temporary impact. This temporary impact can be calculated given the following factors:
-\begin{itemize}
-  \item $\gamma$ be the initial impact factor on the mid-price.
-  \item $\rho$ be the recovery factor of the initial impact on the mid-price
-\end{itemize}
-We will still assume that, during the continuous phase, there is no lasting impact on the fundamental price after each trade, presumably due to us spreading our orders into smaller chunks and utilize smart order routing algorithms. The cost of trading is then:
+Based on the Proof (\ref{proof:optimal-strategy}) in the Appendix, we have the optimal size of block trade in the call auction is:
 \[
-  U = \eta_1 V_0^2  + \int_0^T V_0 \gamma e^{-\rho s} E_s ds + \int_0^T \eta_2 E_s^2 ds
-\]
-To solve this, first we assume $V_0$ is static, and solve the cost of trading during continuous phase:
-\[
-  C_c = \int_0^T V_0 \gamma e^{-\rho s} E_s ds + \int_0^T \eta_2 E_s^2 ds = \int_0^T L(s, Xs, Es) ds
-\]
-where $ L(s, Xs, Es)$ is the Lagrangian of the functional. We need to find a pair of $(X_t, D_t)$ as a stationary point (function) of the functional. We adopt the arguments in the derivation of the Euler-Lagrange equation as follows:
-Let $v_t$ be an admissible perturbation function, $\epsilon$ is a scalar, and
-\[
-  X_t = \hat{X_t} + \epsilon v_t
-\]
-\[
-  E_t = \hat{E_t} + \epsilon {v'}_t
-\]
-where $\hat{X_t}$ and $\hat{E_t}$ are the optimal solution. Now, since we want our functional to be minimized when $\epsilon=0$ we can state that
-\[
-  \frac{d}{d\epsilon} \int_0^T L(s, Xs, Es) ds|_{\epsilon=0}=0
-\]
-\[
-  \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (V_0 \gamma e^{-\rho s} E_s + \eta_2 E_s^2) ds|_{\epsilon=0}=0
-\]
-\[
-  \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (V_0 \gamma e^{-\rho s} (\hat{E_s} + \epsilon {v'}_s) + \eta_2 (\hat{E_s} + \epsilon {v'}_s)^2) ds|_{\epsilon=0}=0
-\]
-\[
-  \Leftrightarrow \frac{d}{d\epsilon} \left[\int_0^T (V_0 \gamma e^{-\rho s} \hat{E_s} + \eta_2 \hat{D_t}^2 ) ds  + \int_0^T (V_0 \gamma e^{-\rho s}\epsilon {v'}_s + 2\eta_2\hat{E_s}\epsilon{v'}_s + \eta_2\epsilon^2{v'}^2_s)ds\right]|_{\epsilon=0}=0
-\]
-\[
-  \Leftrightarrow \int_0^T (V_0 \gamma e^{-\rho s} {v'}_s + 2\eta_2\hat{E_s}{v'}_s + 2\eta_2\epsilon{v'}^2_s)ds|_{\epsilon=0} = 0
-\]
-\[
-  \Leftrightarrow \int_0^T (V_0 \gamma e^{-\rho s}  + 2\eta_2\hat{E_s}) {v'}_s ds = 0
-\]
-Using integration by parts and the natural boundaries conditions $v(0)=0$ and $v(T)=0$, we have
-\[
-  V_0 \gamma e^{-\rho s}  + 2\eta_2\hat{E_s} = C
-\]
-\[
-  \Leftrightarrow \frac{V_0 \gamma}{2\eta_2} e^{-\rho s}  + \hat{E_s} = A
-\]
-\[
-  \Leftrightarrow \hat{E_s} = A - \frac{V_0 \gamma}{2\eta_2} e^{-\rho s}
-\]
-\[
-  \Leftrightarrow \hat{X_t} - \hat{X_0} = At + B - \frac{V_0 \gamma}{2\eta_2 \rho} (1 - e^{-\rho t})
-\]
-Using the boundary conditions:
-\[
-  \hat{X_T} = 0
-\]
-\[
-  \hat{X_0} = Q_0 - V_0
-\]
-we have
-\[
-  B = 0
-\]
-\[
-  A = \frac{2 (V_0 - Q_0) + \frac{(1 - e^{-T \rho})}{\eta_2 \rho} V_0 \gamma} {2 T}
-\]
-\[
-  \Leftrightarrow \hat{X_t} = Q_0 - V_0  - \frac{V_0 \gamma}{2 \eta_2 \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (V_0 \gamma - e^{T \rho}V_0 \gamma + 2 e^{T \rho} (Q_0 - V_0) \eta_2 \rho )}{2 T \eta_2 \rho} t
-\]
-which intuitively makes sense, as it's a combination of a TWAP due to the fact that the optimal solution with only instantaneous impact during continuous trading phase is accounted for, and a exponential component to account for the decay of the call auction's impact. The total cost of trading is then
-\[
-  U = \eta_1 V_0^2 + \frac{(e^{-2 T \rho} - 1) T \gamma^2 \rho V_0^2 + 2 [2 Q_0 \eta_2 \rho + \{(e^{-T \rho} - 1) \gamma - 2 \eta_2 \rho\} V_0]^2}{8 T \eta_2 \rho^2}
-\]
-Taking the first derivative w.r.t. $V_0$ and solve for $V_0$, we have
-\[
-  V_0 = \frac{F_1}{F_2} Q_0
+  B_0 = \frac{F_1}{F_2} Q_0
 \]
 where
 \[
-  F_1 = 4 e^{T \rho} \eta_2 \rho [-\gamma + e^{T \rho} (\gamma + 2 \eta_2 \rho)]
-\]
-\begin{equation}
-  \begin{split}
-    F_2 = \gamma^2 (2 + T \rho) - 4 e^{T \rho} \gamma (\gamma + 2 \eta_2 \rho)\ \\
-    + e^{2 T \rho} [8 \eta_2 \gamma \rho + 8 \eta_2 (T \eta_1 + \eta_2) \rho^2 + \gamma^2 (2 - T \rho)]
-  \end{split}
-\end{equation}
-
-
-Finally, we have the scenario where we account for the recovery of market impact both from the call auction and during the continuous auction. Although it will allow us to derive the most comprehensive solution, it is also the most complex one. The assumption is that the asset under consideration is relatively illiquid, and therefore any trading we have will result in a lasting impact on the mid-price, even after splitting our meta-order into smaller child orders to avoid market impact. The cost of trading is then:
-\[
-  U = \eta_1 V_0^2  + \int_0^T E_t V_0 \gamma_1 e^{-\rho_1 t} dt + \int_0^T E_t \int_0^t  \gamma_2 E_s e^{-\rho_2(t-s)} ds dt  + \int_0^T \eta_2 E_t^2 dt
-\]
-Again, we assume $V_0$ to be constant first, and find the optimal trading curve during the continuous trading phase:
-\[
-  \begin{aligned}
-    C_c = \int_0^T E_t V_0 \gamma_1 e^{-\rho_1 t} dt + \int_0^T E_t \int_0^t  \gamma_2 E_s e^{-\rho_2(t-s)} ds dt  + \int_0^T \eta_2 E_t^2 dt \\
-    = \int_0^T L(t, X_t,E_t) dt
-  \end{aligned}
-\]
-where again $L(t, X_t,E_t)$ is the Lagrangian of the functional. Similar to the previous arguments, let $v_t$ be an admissible perturbation function, $\epsilon$ is a scalar, and
-\[
-  X_t = \hat{X}_t + \epsilon v_t
+  F_1 = 4 e^{T \rho} \beta \rho [-\alpha + e^{T \rho} (\alpha + 2 \beta \rho)]
 \]
 \[
-  E_t = \hat{E_t} + \epsilon {v'}_t
+  F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)
+  + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
 \]
-where $\hat{X_t}$ and $\hat{E_t}$ are the optimal solution. Again, since we want our functional to be minimized when $\epsilon=0$ we can state that
+which is a fraction of the total position $Q_0$. The optimal trading strategy during continuous session is:
 \[
-  \frac{d}{d\epsilon} \int_0^T L(t, Xt, Et) dt|_{\epsilon=0}=0
+  \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \beta \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \beta \rho )}{2 T \beta \rho} t
 \]
 
+which is a combination of a TWAP with an exponentially decayed component to account for the spillover effect. The total cost of trading is then
 \[
-  \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (E_t V_0 \gamma_1 e^{-\rho_2 t} + \int_0^T E_t \int_0^t  \gamma_2 E_s e^{-\rho_2(t-s)} ds + \eta_2 E_t^2) dt|_{\epsilon=0}=0
+  C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \beta \rho + \{(e^{-T \rho} - 1) \alpha - 2 \beta \rho\} B_0]^2}{8 T \beta \rho^2}
 \]
 
-\[
-  \Leftrightarrow \frac{d}{d\epsilon} \int_0^T ( [\hat{E_t} + \epsilon {v'}_t] V_0 \gamma_1 e^{-\rho_1 t} + \int_0^T [\hat{E_t} + \epsilon {v'}_t] \int_0^t  \gamma_2 [\hat{E_s} + \epsilon {v'}_s] e^{-\rho_2(t-s)} ds + \eta_2 [\hat{E_t} + \epsilon {v'}_t]^2) dt|_{\epsilon=0}=0
-\]
 
-\[
-  \begin{aligned}
-    \Leftrightarrow \frac{d}{d\epsilon} \int_0^T \left( \hat{E_t} V_0 \gamma_1 e^{-\rho_1 t} + \int_0^T \hat{E_t} \int_0^t  \gamma_2 \hat{E_s} e^{-\rho_2(t-s)} ds + \eta_2 \hat{E_t}^2 \right) dt|_{\epsilon=0} \\
-    +\frac{d}{d\epsilon} \int_0^T \left( \epsilon {v'}_t V_0 \gamma_1 e^{-\rho_1 t} \right)dt|_{\epsilon=0}                                                                                                      \\
-    +\frac{d}{d\epsilon} \int_0^T \left( \hat{E_t} \int_0^t  \gamma_1 \epsilon {v'}_s e^{-\rho_1(t-s)} ds
-    +\hat{E_t} \int_0^t  \gamma_2 \epsilon {v'}_s e^{-\rho_2(t-s)} ds
-    +\epsilon {v'}_t \int_0^t  \gamma_2 \hat{E_s} e^{-\rho_2(t-s)} ds
-    +\epsilon {v'}_t \int_0^t  \gamma_2 \epsilon {v'}_s e^{-\rho_2(t-s)} ds \right)dt|_{\epsilon=0}                                                                                                              \\
-    +\frac{d}{d\epsilon} \int_0^T \left(2 \eta_2 \hat{E_t}\epsilon {v'}_t + \eta_2 \epsilon^2 {v'}_t^2 \right)dt|_{\epsilon=0}                                                                                   \\ =0
-  \end{aligned}
-\]
+\subsection{Summary}
 
-\[
-  \begin{aligned}
-    \Leftrightarrow \int_0^T \left( {v'}_t V_0 \gamma_1 e^{-\rho_1 t}
-    + \gamma_2 {v'}_t \int_0^t  \hat{E_s} e^{-\rho_2(t-s)} ds
-    + \hat{E_t} \int_0^t  \gamma_2 {v'}_s e^{-\rho_2(t-s)} ds
-    + 2 \eta_2 \hat{E_t} {v'}_t  \right)dt=0
-  \end{aligned}
-\]
-
-Using a change of variables, we have
-
-\[
-  \begin{aligned}
-    \Leftrightarrow \int_0^T \left( {v'}_t V_0 \gamma_1 e^{-\rho_1 t}
-    + \gamma_2 {v'}_t \int_0^t  \hat{E_s} e^{-\rho_2(t-s)} ds
-    + \gamma_2 {v'}_t \int_t^T  \hat{E_s} e^{-\rho_2(t-s)} ds
-    + 2 \eta_2 \hat{E_t} {v'}_t  \right)dt=0
-  \end{aligned}
-\]
-
-which can be combined as
-
-\[
-  \begin{aligned}
-    \Leftrightarrow \int_0^T {v'}_t  \left(V_0 \gamma_1 e^{-\rho t}
-    + \gamma_2 \int_0^T  \hat{E_s} e^{-\rho_2|t-s|} ds
-    + 2 \eta_2 \hat{E_t} \right)dt=0
-  \end{aligned}
-\]
-
-We then have
-
-\begin{equation}\label{optimize_eqb_all}
-  \begin{aligned}
-    \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}
-    + \frac{\gamma_2}{2 \eta_2} \int_0^T  \hat{E_s} e^{-\rho_2|t-s|} ds
-    + \hat{E_t} = C
-  \end{aligned}
-\end{equation}
-
-for some constant $C$, using integration by parts and the natural boundaries conditions $v(0)=0$ and $v(T)=0$.
-Looking at Equation (\ref{optimize_eqb_all}), we can observe an interesting pattern: the optimal solution $\hat{E_t}$ is an optimization among three effects:
+The main findings of this section can be summarized as follows:
 
 \begin{itemize}
-  \item The decay of the initial call auction trade during the continuous trading phase.
-  \item The decay of the temporary impact during the continuous trading phase.
-  \item The instantaneous impact during the continuous trading phase.
+  \item The presence of informed trading from the market maker is required for the call auction to open, as he or she will provide the necessary liquidity to offset the buy-sell imbalance at the end of the call auction.
+  \item The transition period from the call auction will be characterized with a wide initial spread narrowing over time due to inventory management from the market maker.
+  \item There is a potential gain from liquidating portion of the position in the call auction, since the call auction allows the trader to trade into the theoretical bid-ask spread.
+  \item There is an optimal liquidation strategy to execute trade during both the call auction and the continuous auction. The mixing ratio of the strategy is determined by the efficiency of each auction, in terms of immediate cost of aggressing the book and the speed of spread recovery after market opening.
 \end{itemize}
-Let $z(s)=\hat{E_s}$, we have
-\[
-  \begin{aligned}
-    \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}
-    + \frac{\gamma_2}{2 \eta_2} \int_0^T  z(s) e^{-\rho_2|t-s|} ds
-    + z(t) = C
-  \end{aligned}
-\]
-which shows that this is a Weiner-Hopf integral equation of the second kind with constant limits of integration. To solve this, we differentiate the equation twice w.r.t $t$ to get
-\[
-  -2 \rho_2 z(t) \frac{\gamma_2}{2 \eta_2} + \rho_2^2 \frac{\gamma_2}{2 \eta_2} \int_0^t e^{-\rho_2(s-t)} z(s) ds + \rho_2^2 \frac{\gamma_2}{2 \eta_2} \int_t^T e^{-\rho_2(t-s)} z(s) ds = 0
-\]
-(substitution)
-\[
-  \Leftrightarrow z{''}(t) - 2 \rho_2 z(t) \frac{\gamma_2}{2 \eta_2} + \rho_2^2 C - \rho_2^2 z(t) = 0
-\]
-\[
-  \Leftrightarrow z{''}(t)  - \rho_2\left(\frac{\gamma_2}{\eta_2} + \rho_2 \right) z(t) = -\rho_2^2 C
-\]
-Next, we set $t=0$ and $t=T$ into the original Euler Lagrange equation to derive the set of the boundary conditions:
-\[
-  \begin{aligned}
-    \frac{V_0 \gamma_1}{2 \eta_2} + \frac{\gamma_2}{2 \eta_2} \int_0^T  z(s) e^{-\rho_2 s} ds + z(0) = C
-  \end{aligned}
-\]
-\[
-  \begin{aligned}
-    \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 T} + \frac{\gamma_2}{2 \eta_2} e^{-\rho_2 T}\int_0^T  z(s) e^{\rho_2 s} ds + z(T) = C
-  \end{aligned}
-\]
-Some manipulations resulting in
-\[
-  z'(0) = \rho_2 \left[C - z(0) - \frac{V_0 \gamma_1}{2 \eta_2} \right]
-\]
-\[
-  z'(T) = \rho_2 \left[C - z(T) - \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 T}\right]
-\]
-Therefore, we have a the following second-order linear non-homogeneous ordinary differential equation with constant coefficients
-\begin{equation}\label{ode_for_all_cond}
-  z{''}(t)  - \rho_2\left(\frac{\gamma_2}{\eta_2} + \rho_2 \right) z(t) = -\rho_2^2 C
-\end{equation}
-with the following boundary conditions
-\begin{equation}\label{ode_boundary_cond_1}
-  z'(0) = \rho_2 \left[C - z(0) - \frac{V_0 \gamma_1}{2 \eta_2} \right]
-\end{equation}
-\begin{equation}\label{ode_boundary_cond_2}
-  z'(T) = \rho_2 \left[C - z(T) - \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 T}\right]
-\end{equation}
 
-Let $k=\sqrt{\rho_2 \left(\rho_2 + \frac{\gamma_2}{\eta_2}\right)}$, the general solution has the form
-\begin{equation}
-  \begin{split}
-    z(t) = C_1 cosh[k t]+ C_2  sinh[k t] + [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}] \\
-    + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t sinh[k(t-s)] [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-  \end{split}
-\end{equation}
-and therefore
-\begin{equation}
-  \begin{split}
-    z'(t) = C_1 k  sinh[k t]+ C_2 k cosh[k t] + \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t} \rho_1 \\
-    + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t cosh[k(t-s)] k (C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 s})ds
-  \end{split}
-\end{equation}
-Using condition
-\[
-  \int_0^T z(s) ds = X(T) - X(0) = V_0 - Q_0
-\]
-we have
-\begin{equation}\label{ode_boundary_cond_3}
-  C = -C_1 \frac{ \sinh (k T)}{k T}+C_2 \frac{(1-\cosh (k T))}{k T}-\frac{Q_0}{T}+V_0 \left(\frac{\gamma_1 \left(1-e^{\rho_1 (-T)}\right)}{\eta_2 \rho_1
-    T}+\frac{1}{T}\right)
-\end{equation}
-From Equations (\ref{ode_boundary_cond_1}), (\ref{ode_boundary_cond_2}) and (\ref{ode_boundary_cond_3}), we can solve for $C$, $C_1$ and $C_2$. We then have the optimal liquidation strategy during continuous trading phase is:
-\[
-  \begin{split}
-    E_t = C_1 cosh[k t]+ C_2  sinh[k t] + [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}] \\
-    + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t sinh[k(t-s)] [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-  \end{split}
-\]
-We also can prove that $C$, $C_1$ and $C_2$ are linear function of $V_0$. Taking the second derivatives of $z(t)$ and $z'(t)$ we have:
-\[
-  \frac{d^2z(t)}{dV_0^2} = \frac{d^2C_1}{dV_0^2} cosh(kt) + \frac{d^2C_2}{dV_0^2} sinh(kt) + \frac{d^2C}{dV_0^2} + \frac{\rho \gamma}{\eta_2 k}\int_0^t sinh[k(t-s)] \frac{d^2C}{dV_0^2} ds
-\]
-\[
-  \frac{d^2z'(t)}{dV_0^2} = \frac{d^2C_1}{dV_0^2} k sinh(kt) + \frac{d^2C_2}{dV_0^2} k cosh(kt) + \frac{\rho \gamma}{\eta_2 k}\int_0^t cosh[k(t-s)] k \frac{d^2C}{dV_0^2} ds
-\]
+Before moving to empirical analysis, it is imperative to address some stylized facts of our model. We assume that the liquidity traders are price takers who submit market orders to signify his intention to trade regardless of opening price, and the market maker will post limit orders to counter the imbalance. In most modern stock exchanges, all participants can post limit orders in the order book to be "crossed" during the opening match. Limit orders can also be modified or cancelled before the opening match, allowing participants to update their pricing. However, as long as the market maker in our model can place his trade after all the liquidity traders has submitted their orders, the pricing schedule based on the market imbalance still holds.
 
-Equations (\ref{ode_boundary_cond_1}), (\ref{ode_boundary_cond_2}) and (\ref{ode_boundary_cond_3}), we have the following system of linear equation:
-\[
-  \systeme*{
-    \syslineskipcoeff{2}
-    \frac{d^2z'(t)}{dV_0^2}(0) = \rho\left[ \frac{d^2C}{dV_0^2} - \frac{d^2z(t)}{dV_0^2}(0) \right],
-    \frac{d^2z'(t)}{dV_0^2}(T) = \rho\left[ \frac{d^2C}{dV_0^2} - \frac{d^2z(t)}{dV_0^2}(T) \right],
-    \frac{d^2C}{dV_0^2} = \frac{sinh[kT]}{kT} \frac{d^2C_1}{dV_0^2} + \left(\frac{1-cosh(kT)}{kT}\right)\frac{d^2C_2}{dV_0^2}
-  }.
-\]
-Solve the system of linear equations, we have
-\[
-  \frac{d^2C}{dV_0^2} =  \frac{d^2C_1}{dV_0^2} =  \frac{d^2C_2}{dV_0^2} = 0
-\]
-and therefore $C$, $C_1$ and $C_2$ are linear function of $V_0$. Now we are ready to optimize for $V_0$, the initial block trade during auction phase. Recall that the total cost function is:
-\[
-  U = \eta_1 V_0^2  + \int_0^T E_t V_0 \gamma_1 e^{-\rho_1 t} dt + \int_0^T E_t \int_0^t  \gamma_2 E_s e^{-\rho_2 (t-s)} ds dt  + \int_0^T \eta_2 E_t^2 dt
-\]
-Taking the first derivative of $U$ with respect to $V_0$, we have
-\[
-  \begin{aligned}
-    \frac{dU}{dV_0} = 2 \eta_1 V_0                                                                  \\
-    + \int_0^T E_t \gamma_1 e^{-\rho_1 t} dt + \int_0^T \frac{dE_t}{dV_0} \gamma_1 e^{-\rho_1 t} dt \\
-    + \int_0^T \frac{dE_t}{dV_0} \int_0^t  \gamma_2 E_s e^{-\rho_2(t-s)} ds dt                      \\
-    + \int_0^T E_t \int_0^t  \gamma_2 \frac{dE_s}{dV_0} e^{-\rho_2(t-s)} ds dt                      \\
-    + \int_0^T \eta_2 2 E_t \frac{dE_t}{dV_0} dt
-  \end{aligned}
-\]
-We have
-\[
-  \begin{aligned}
-    \frac{dE_t}{dV_0} = \frac{dC_1}{dV_0} cosh[k t]+ \frac{dC_2}{dV_0}  sinh[k t] + [\frac{dC}{dV_0} - \frac{\gamma_1}{2 \eta_2} e^{-\rho_1 t}] \\
-    + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t sinh[k(t-s)] [\frac{dC}{dV_0}- \frac{\gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-  \end{aligned}
-\]
-Since $C$, $C_1$ and $C_2$ are linear function of $V_0$, their first derivative is a constant. As a result, we can infer that $\frac{dE_t}{dV_0}$ is a function of $t$ only. We then have the optimal $V_0$ as
-\[
-  V_0 = \frac{F_1}{F_2}
-\]
-where
-\[
-  \begin{aligned}
-    F_1 =  \int_0^T E_t \gamma_1 e^{-\rho_1 t} dt + \int_0^T \frac{dE_t}{dV_0} \gamma_1 e^{-\rho_1 t} dt \\
-    + \int_0^T \frac{dE_t}{dV_0} \int_0^t  \gamma_2 E_s e^{-\rho_2(t-s)} ds dt                           \\
-    + \int_0^T E_t \int_0^t  \gamma_2 \frac{dE_s}{dV_0} e^{-\rho_2(t-s)} ds dt                           \\
-    + \int_0^T \eta_2 2 E_t \frac{dE_t}{dV_0} dt
-  \end{aligned}
-\]
-\[
-  F_2 = 2 \eta_1
-\]
-Although an analytic solution exists for $V_0$ that depends only on the market impact factors and initial portfolio, it is forbiddingly complex. Instead, we can use the following root-finding algorithm to find the analytical form of $E_t$ and $V_0$:
-\begin{algorithm}
-  Let the inputs of the algorithm be $(\eta_2,\eta_1,\gamma,\rho,Q_0,\epsilon)$. We have the following formulas:
+We also assume that there is only one market maker and only he or she trades with private information. In practice, there can be multiple agents trading with information. However, as long as the private information is derived from public data, that is, no insider trading, we can assume that all informed agent will have the same "signal" regarding the fair price of the stock, and are only different in their risk aversion factor. Therefore, we can assume that all informed agents are trading with same risk aversion factor, which are represented by the market maker in our model.
 
-  % Et
-  \[
-    \begin{split}
-      E_t = C_1 cosh[k t]+ C_2  sinh[k t] + [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}] \\
-      + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t sinh[k(t-s)] [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-    \end{split}
-  \]
+The source of private information is also a vital assumption in our model. We assume that the market maker derives his valuation from public information, which include, but not limited to, the following factors:
+\begin{itemize}
+  \item Public order flow, with or without identity.
+  \item General market information, such as index futures movement before equity market opening. 
+  \item Price continuity from previous day's closing price. In absence of any fundamental news, it is reasonable to expect the opening price to be close to the previous day's closing price.
+\end{itemize}
 
-  % dEt/dV0
-  \[
-    \begin{aligned}
-      \frac{dE_t}{dV_0} = \frac{dC_1}{dV_0} cosh[k t]+ \frac{dC_2}{dV_0}  sinh[k t] + [\frac{dC}{dV_0} - \frac{\gamma_1}{2 \eta_2} e^{-\rho_1 t}] \\
-      + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t sinh[k(t-s)] [\frac{dC}{dV_0}- \frac{\gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-    \end{aligned}
-  \]
+Another deviation is the inventory management effects of the market maker. In our model, there is market maker's inventory management effects on the spread due to the position acquired from the opening auction, but not in the continuous auction. While it would be more complete to account for the inventory management effects in both auctions, our empirical analysis suggests that the inventory management effects of the continuous auction is less prominent compared to the opening auction. Specifically, we observed that
+\begin{itemize}
+  \item There is little evidence that the bid-ask spread is changed following a trade except near the opening and closing auctions.
+  \item The auction matching volume is usually much larger than a normal trade during continuous phase, accounted for a significant fraction of the daily trading volume.
+\end{itemize}
 
-  % dEt/dt
-  \[
-    \begin{split}
-      E'_t = C_1 sinh[k t] k+ C_2 cosh[k t] k + \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}] \rho_1 \\
-      + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t cosh[k(t-s)] k [C- \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-    \end{split}
-  \]
+Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will make profit after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the gain from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his gain. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time. 
 
+With those caveats in mind, we can proceed to the empirical analysis of NASDAQ data to estimate the liquidation cost of trading in both auctions compared to only during the continuous auction.
 
-  % d2Et/dt dV0
-  \[
-    \begin{split}
-      \frac{dE'_t}{dV_0}  = \frac{dC_1}{dV_0} sinh[k t] k + \frac{dC_2}{dV_0} cosh[k t] k + \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 t}] \rho_1 \\
-      + \frac{\rho_2 \gamma_2}{\eta_2 k}\int_0^t cosh[k(t-s)] k [ \frac{dC}{dV_0} - \frac{V_0 \gamma_1}{2 \eta_2} e^{-\rho_1 s}]ds
-    \end{split}
-  \]
+\section{Empirical Analysis}\label{sec:EmpiricalAnalysis}
 
-  We start with an initial guess of $V_0$, possibly from using one of the earlier analytic solutions. Initiate the following steps:
+In this section, we will estimate the liquidation cost of trading in both auction for 100 liquid stocks in the NASDAQ exchange. We begin the section with the exchange rules regarding opening call auction and continuous auction of the NASDAQ exchange. After which, we provide description of our data, including how our stocks are picked. We then describe our estimation methodology, with examples using Apple Inc. (APPL) data. Lastly, we provide cross-sectional analysis of our stock portfolio to show how liquidation cost changes with respect to tick size of the stock.
 
+\subsection{Opening auction and continuous auction of the NASDAQ exchange}
+
+Opening auction is NASDAQ is called \textbf{Opening Cross}. While similar to the general call auction described in our model, there are certain subtle difference between our model and the NASDAQ's Opening Cross:
+\begin{itemize}
+  \item Before the opening bell at 9:30 EST, NASDAQ allows investors to submit orders to two different books: a continuous book and an opening cross book. Orders submitted to the continuous book will be matched immediately and disseminate in the market data feed. Orders submitted to the opening cross book will be withheld to be matched later and are not visible in the market data feed.
+  \item At 9:30 EST, the opening cross book and the continuous book will be merged together to form a single book, and a Opening Cross price will be calculated based on the following three rules, similar to our Walrasian matching rule:
   \begin{itemize}
-    \item Calculate $C$, $C_1$ and $C_2$ using the system of equations
-          \[
-            \systeme*{
-              \syslineskipcoeff{1}
-              CT = \frac{C_2}{kT} - Q_0 + V_0 - \frac{(-1 + e^{-T \rho}) V_0 \gamma}{\eta_1 \rho} -  \frac{C_2 \cosh{kT} + C_1 \sinh{kT}}{k},
-              E_t'(0) = \rho \left[C - E_t(0) - \frac{V_0 \gamma}{2 \eta_2} \right],
-              E_t'(T) = \rho \left[C - E_t(T) - \frac{V_0 \gamma}{2 \eta_2} e^{-\rho T}\right]
-            }.
-          \]
-
-    \item Estimate $\frac{dC}{dV_0}$, $\frac{dC_1}{dV_0}$ and $\frac{dC_2}{dV_0}$ using the system of equations
-          \[
-            \systeme*{
-            \syslineskipcoeff{1}
-            \frac{dC}{dV_0} T = \frac{\frac{dC_2}{dV_0}}{kT} + 1 - \frac{(-1 + e^{-T \rho}) \gamma}{\eta_1 \rho} -  \frac{\frac{dC_2}{dV_0} \cosh{kT} + \frac{dC_1}{dV_0} \sinh{kT}}{k},
-            \frac{dE_t'[V_0]}{dV_0}(0) = \rho \left[\frac{dC}{dV_0} - \frac{dE_t[V_0]}{dV_0}(0) - \frac{ \gamma}{2 \eta_2} \right],
-            \frac{dE_t'[V_0]}{dV_0}(T) = \rho \left[\frac{dC}{dV_0} - \frac{dE_t[V_0]}{dV_0}(T) - \frac{ \gamma}{2 \eta_2} e^{-\rho T}\right]
-            }
-          \]
-
-    \item Calculate new $\hat{V_0}$.
-          \[
-            \hat{V_0} = \frac{F_1}{F_2}
-          \]
-          where
-          \[
-            \begin{aligned}
-              F_1 =  \int_0^T E_t \gamma e^{-\rho t} dt + \int_0^T \frac{dE_t}{dV_0} \gamma e^{-\rho t} dt \\
-              + \int_0^T \frac{dE_t}{dV_0} \int_0^t  \gamma E_s e^{-\rho(t-s)} ds dt                       \\
-              + \int_0^T E_t \int_0^t  \gamma \frac{dE_s}{dV_0} e^{-\rho(t-s)} ds dt                       \\
-              + \int_0^T \eta_2 2 E_t \frac{dE_t}{dV_0} dt
-            \end{aligned}
-          \]
-          \[
-            F_2 = 2 \eta_1
-          \]
-
-    \item Calculate the residual
-          \[
-            e = (V_0 - \hat{V_0})/V_0
-          \]
-    \item If $e<\epsilon$, return $\hat{V_0}$ and $E_t$ as solutions, else set $V_0=\hat{V_0}$ and repeat. The formula for $V_0$ has bounded first derivative, so it is guaranteed to converge in this fixed-point iteration algorithm (See, for example, \cite{Burden1989}).
+    \item Maximize the number of shares executed.
+    \item Minimize the imbalance of Cross orders.
+    \item Minimize the distance from the Nasdaq inside bid-ask midpoint.
   \end{itemize}
-\end{algorithm}
+  Matched orders and total matching quantity from the Opening Cross will then be disseminated in the market data feed. Market is considered to be in the continuous trading phase at this point of time.  
+\end{itemize}
 
-\section{Sensitivity Analysis}\label{secSensitivityAnalysis}
-In this section, we will perform sensitivity analysis of the optimal solution regarding its impact parameters.
+While the presence of the continuous book during the call auction period deviates from our assumption, it makes little difference in practice due to limited volume transacted during this period. On the other hand, the hidden nature of the Opening Cross orders mean that we cannot directly derive the cost of aggressing the book during the call auction. Fortunately, based on the arguments in subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we can infer the cost of trading during the call auction from the spread and matching volume immediate upon market opening.
+
+The continuous auction ''in the NASDAQ exchange, on the other hand, is similar to our model.
+
+\subsection{Data description}
+
+Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock.
+
+As suggested in (some papers), the relative tick size of the stock may have certain effects on the cost of trading. A small tick stock will have 
 
 \section{Conclusion}\label{secConclusion}
-We shows that there is an closed form optimal liquidation strategy in a mixed-auction market, under the classical assumptions of instantaneous, temporary and resilent market impact functional. We also shows that when the cost of trading in the call auction is comparable to the continuos trading phase, our strategy yields significant cost savings, even under the simplest assumptions of constant, instantaneous market impact only. Subsequent research on different forms of market impact under both auctions, and extending to multi-phase auction market, can be conducted in the future to yield more interesting findings.
+We shows that when the cost of trading in the call auction is comparable to the continuous trading phase, our strategy yields significant cost savings. Subsequent research on different forms of market impact under both auctions, and extending to multi-phase auction market, can be conducted in the future to yield more interesting findings.
+
+\section{Appendix}
+
+\begin{proof}[Derivation of the optimal trading strategy]\label{proof:optimal-strategy}
+  The cost of trading is:
+  \[
+    C = \alpha B_0^2  + \alpha \int_0^T B_0 e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
+  \]
+  First we assume $B_0$ is static, and solve the cost of trading during continuous phase:
+  \[
+    C_c = \int_0^T B_0 \alpha e^{-\rho s} E_s ds + \int_0^T \beta E_s^2 ds = \int_0^T L(s, Xs, Es) ds
+  \]
+  where $ L(s, Xs, Es)$ is the Lagrangian of the functional. We need to find a pair of $(X_t, D_t)$ as a stationary point (function) of the functional. We adopt the arguments in the derivation of the Euler-Lagrange equation as follows:
+  Let $v_t$ be an admissible perturbation function, $\epsilon$ is a scalar, and
+  \[
+    X_t = \hat{X_t} + \epsilon v_t
+  \]
+  \[
+    E_t = \hat{E_t} + \epsilon {v'}_t
+  \]
+  where $\hat{X_t}$ and $\hat{E_t}$ are the optimal solution. To minimize when $\epsilon=0$, we can state that
+  \[
+    \frac{d}{d\epsilon} \int_0^T L(s, Xs, Es) ds|_{\epsilon=0}=0
+  \]
+  \[
+    \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (B_0 \alpha e^{-\rho s} E_s + \beta E_s^2) ds|_{\epsilon=0}=0
+  \]
+  \[
+    \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (B_0 \alpha e^{-\rho s} (\hat{E_s} + \epsilon {v'}_s) + \beta (\hat{E_s} + \epsilon {v'}_s)^2) ds|_{\epsilon=0}=0
+  \]
+  \[
+    \Leftrightarrow \frac{d}{d\epsilon} \left[\int_0^T (B_0 \alpha e^{-\rho s} \hat{E_s} + \beta \hat{D_t}^2 ) ds  + \int_0^T (B_0 \alpha e^{-\rho s}\epsilon {v'}_s + 2\beta\hat{E_s}\epsilon{v'}_s + \beta\epsilon^2{v'}^2_s)ds\right]|_{\epsilon=0}=0
+  \]
+  \[
+    \Leftrightarrow \int_0^T (B_0 \alpha e^{-\rho s} {v'}_s + 2\beta\hat{E_s}{v'}_s + 2\beta\epsilon{v'}^2_s)ds|_{\epsilon=0} = 0
+  \]
+  \[
+    \Leftrightarrow \int_0^T (B_0 \alpha e^{-\rho s}  + 2\beta\hat{E_s}) {v'}_s ds = 0
+  \]
+  Using integration by parts and the natural boundaries conditions $v(0)=0$ and $v(T)=0$, we have
+  \[
+    B_0 \alpha e^{-\rho s}  + 2\beta\hat{E_s} = C
+  \]
+  \[
+    \Leftrightarrow \frac{B_0 \alpha}{2\beta} e^{-\rho s}  + \hat{E_s} = A
+  \]
+  \[
+    \Leftrightarrow \hat{E_s} = A - \frac{B_0 \alpha}{2\beta} e^{-\rho s}
+  \]
+  \[
+    \Leftrightarrow \hat{X_t} - \hat{X_0} = At + B - \frac{B_0 \alpha}{2\beta \rho} (1 - e^{-\rho t})
+  \]
+  Using the boundary conditions:
+  \[
+    \hat{X_T} = 0
+  \]
+  \[
+    \hat{X_0} = Q_0 - B_0
+  \]
+  we have
+  \[
+    B = 0
+  \]
+  \[
+    A = \frac{2 (B_0 - Q_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {2 T}
+  \]
+  \[
+    \Leftrightarrow \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \beta \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \beta \rho )}{2 T \beta \rho} t
+  \]
+  The total cost of trading is then
+  \[
+    C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \beta \rho + \{(e^{-T \rho} - 1) \alpha - 2 \beta \rho\} B_0]^2}{8 T \beta \rho^2}
+  \]
+  Taking the first derivative w.r.t. $B_0$ and solve for $B_0$, we have
+  \[
+    B_0 = \frac{F_1}{F_2} Q_0
+  \]
+  where
+  \[
+    F_1 = 4 e^{T \rho} \beta \rho [-\alpha + e^{T \rho} (\alpha + 2 \beta \rho)]
+  \]
+  \[
+    \begin{split}
+      F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)\ \\
+      + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
+    \end{split}
+  \]
+\end{proof}
 
 \bibliographystyle{plain}
 \bibliography{references}
