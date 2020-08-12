@@ -178,9 +178,9 @@ and variance
   \sigma_e^2=var[v|\Omega_e]=\frac{1}{\zeta_e+\psi_e}
 \]
 Maximizing expected utility of the market maker, we have the amount of shares submitted
-\[
+\begin{equation}\label{eqn:mm_eval_eqb}
   q(p) = a_e - b_e p
-\]
+\end{equation}
 where $a_e = \frac{p_0}{\lambda \sigma_e^2} - e_e$ and $b_e=\frac{1}{\lambda \sigma_e^2}$. We assume the $K$ liquidity traders will submit a total of $\sum_{i=0}^K x_i$ shares into the call auction to be matched, with negative values implying selling and vice versa. The total shares transacted at a given price $p$ is then
 \[
   Q(p) = (p_0 - p) b_e + \sum_{i=0}^K x_i
@@ -225,9 +225,9 @@ and variance
 \]
 
 At the beginning of each round, the market maker has a position $e_c$ that he wants to liquidate. Maximizing the market maker's utility function, we have his order quantity function in the book:
-\[
+\begin{equation}\label{eqn:mm_eval_cont}
   q_c(p) = a_c - b_c p_c
-\]
+\end{equation}
 where $a_c = \frac{v_c}{\lambda \sigma_c^2} - e_c$ and $b_c=\frac{1}{\lambda \sigma_c^2}$. Let assume the liquidity trader needs to transact $x_0$ shares. The average price he gets after submitting his market order is
 \[
   p_{avg} = \frac{a_c-x_0}{b_c}=p_0 - \frac{1}{b_c} x_0
@@ -237,11 +237,11 @@ where
   p_0 = \frac{a_c}{b_c}
 \]
 is the best price quoted by the market maker. Note that the position is from the perspective of the market maker, that is, the higher number of shares the liquidity trader wants to buy, the higher markup price he will have to pay to transact immediately. In other words, the markup price that the liquidity trader receives is
-\begin{equation}\label{markup_px_cont}
+\begin{equation}\label{eqn:markup_px_cont}
   p_{avg} = p_0 + \frac{1}{b_c} x_0
 \end{equation}
 
-Comparing Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), we can see that, ceteris paribus, the instantaneous market impact of trading during the auction phase has a higher chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes. This is clearer once we examine the transition period immediate after market opening in the next subsection.
+Comparing Equation (\ref{markup_px_eqb}) and Equation (\ref{eqn:markup_px_cont}), we can see that, ceteris paribus, the instantaneous market impact of trading during the auction phase has a higher chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes. This is clearer once we examine the transition period immediate after market opening in the next subsection.
 
 \subsection{Price discovery at market opening}\label{subsec:AnalyticalFrameworkTransitionPeriod}
 
@@ -265,11 +265,11 @@ where $a_e = \frac{p_0}{\lambda \sigma_e^2} - V_e$ and $b_e=\frac{1}{\lambda \si
 
 \begin{figure}[h]
   \includegraphics[width=\textwidth]{MMPricingTransition}
-  \caption{Market maker's quotes immediately after opening w.r.t call auction imbalance. Upon market opening, the market maker will short $V_e$ shares at $p_e$. His evaluation of the asset's fair value is at $p_0$. However, due to his inventory, he will quote the ask side further away at $p_e$, and bid side at $p_0$. The bid-ask spread is then $\frac{V_e}{b_e}$, based on the market maker's pricing function (\ref{markup_px_cont}).}
+  \caption{Market maker's quotes immediately after opening w.r.t call auction imbalance. Upon market opening, the market maker will short $V_e$ shares at $p_e$. His evaluation of the asset's fair value is at $p_0$. However, due to his inventory, he will quote the ask side further away at $p_e$, and bid side at $p_0$. The bid-ask spread is then $\frac{V_e}{b_e}$, based on the market maker's pricing function (\ref{eqn:markup_px_cont}).}
   \label{fig:mm_pricing_transition}
 \end{figure}
 
-Interestingly, the bid-ask spread after market opens reveals the market impact of trading in the call auction. At first glance, due to the similarity of the pricing function during the call auction (Equation (\ref{markup_px_eqb})) and the continuous auction (Equation (\ref{markup_px_cont}), it seems like the market impact of trading in both phases is the same. In other words, if we execute $x$ number of shares, we will get an adverse price linearly proportional to $x$, and if the market maker's signal remains the same, the impact on the cost of trading will be the equal. However, this ignores the fact that during the auction phase, the liquidity trader has a chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes. Specifically, the liquidity trader will potentially face one of two scenarios during the call auction:
+Interestingly, the bid-ask spread after market opens reveals the market impact of trading in the call auction. At first glance, due to the similarity of the pricing function during the call auction (Equation (\ref{markup_px_eqb})) and the continuous auction (Equation (\ref{eqn:markup_px_cont}), it seems like the market impact of trading in both phases is the same. In other words, if we execute $x$ number of shares, we will get an adverse price linearly proportional to $x$, and if the market maker's signal remains the same, the impact on the cost of trading will be the equal. However, this ignores the fact that during the auction phase, the liquidity trader has a chance of getting offset by other liquidity traders in the market. On the other hand, during the continuous phase, the liquidity trader will always receive an adverse markup price implied in market maker's quotes. Specifically, the liquidity trader will potentially face one of two scenarios during the call auction:
 
 \begin{itemize}
   \item {\textbf{Scenario 1: The liquidity trader trades in the same direction as market imbalance}
@@ -282,7 +282,7 @@ Interestingly, the bid-ask spread after market opens reveals the market impact o
         \begin{figure}[h]
           \includegraphics[width=\textwidth]{MMPricingTransitionSameDir}
           \caption{Bid-ask spread under Scenario 1, in which the liquidity trader trades in the same direction as the bid-ask imbalance. Consequently, he will push the ask price up, increase the cost of trading both in the call auction and the subsequent continuous phase.}
-          \label{fig:mm_pricing_transition}
+          \label{fig:mm_pricing_transition_s1}
         \end{figure}
         }
   \item {
@@ -295,23 +295,26 @@ Interestingly, the bid-ask spread after market opens reveals the market impact o
         \begin{figure}[h]
           \includegraphics[width=\textwidth]{MMPricingTransitionDifferentDir}
           \caption{Bid-ask spread under Scenario 2, in which the liquidity trader trades against the bid-ask imbalance. Consequently, he will pull the opening ask price down, while leave the opening bid at $p_0$. As he is selling, there is no impact on his cost of trading after market opening.}
-          \label{fig:mm_pricing_transition}
+          \label{fig:mm_pricing_transition_s2}
         \end{figure}
         }
 \end{itemize}
 The difference in execution prices between two scenarios is the bid-ask spread immediately after market opens, which is
-\[
+\begin{equation}\label{eqn:expected_spread}
   \Delta_p = \frac{V_e}{b_e}
-\]
+\end{equation}
 and therefore is linearly proportional to the size of the imbalance during the call auction. Let assume the log size of the imbalance is distributed as
 \[
   ln(|V_e|) \sim N(V_0, \sigma_{V_0})
 \]
-and there is equal chance of entering each scenario. We then have the expected cost difference, given the same block trade size and other factors, between executing in the call auction and during the continuous phase, is:
+and there is equal chance of entering each scenario. We then have the expected cost difference per share, given the same block trade size and other factors, between executing in the call auction and during the continuous phase, is:
 \begin{equation}\label{eqn:expected_auction_saving}
-  E[\Delta p] =  \frac{e^{V_0}}{2 b_e}
+  E[\zeta] =  \frac{e^{V_0}}{2 b_e}
 \end{equation}
-which shows that even with the same pricing functions, the cost of trading during the auction is smaller than during the continuous phase. Heuristically speaking, trading in the call auction offers the liquidity trader a chance equivalent to immediately getting filled into the spread during the continuous trading phase.
+which shows that even with the same pricing functions, the cost of trading during the auction is smaller than during the continuous phase. Heuristically speaking, trading in the call auction offers the liquidity trader a chance equivalent to immediately getting filled into the spread during the continuous trading phase. This allows us to derive the expected markup price that the liquidity trader receives for trading during the opening auction is
+\begin{equation}\label{eqn:exp_markup_px_eqb}
+  p_{avg} = p_0 + \frac{2 - e^{V_0}}{b_e} x_0
+\end{equation}
 
 Furthermore, as the market maker is buying at the fair price of $p_0$ and selling at a discounted price $p_e$, it is reasonable that he will get filled more on the bid side than the ask side. Under Scenario 2, this has no effect on the liquidity trader, as the liquidity trader will keep hitting the bid to sell while the market maker will try to improve the offer. However, under Scenario 1, this results in an ongoing penalty cost to the liquidity trader that will decay over time, as he will need to lift the offer to sell. Let the speed of liquidation of the market maker be $\rho$ and $V_t$ be the remaining position of the market maker acquired from the call auction in Scenario 1. Consequently, we have
 \[
@@ -320,12 +323,12 @@ Furthermore, as the market maker is buying at the fair price of $p_0$ and sellin
 \[
   V_t[0]=V_e
 \]
-\[
+\begin{equation}\label{eqn:recovery_term_eqb}
   \Leftrightarrow V_t = V_e e^{-\rho t}
-\]
+\end{equation}
 The resulting spread due to our trading during the call auction at time $t$ will be
 \begin{equation}\label{resilence_term}
-  \Delta p_t = \frac{e^{-\rho t}}{b_e}  V_e
+  \zeta_t = \frac{e^{-\rho t}}{b_e}  V_e
 \end{equation}
 
 Therefore, we would expect the spread to be wide initially, and slowly closing due to the inventory management effects from the market maker. This is in aggrement with current empirical evidence that the bid-ask spread narrows shortly after market opens.
@@ -342,7 +345,7 @@ that is, $S_t$ follows a classical arithmetic random walk without any drift. The
   P_t = S_t + D_t
 \]
 
-From Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), it is reasonable to assume that $D_t$ will include a linear cost component proportional to the trading sizes under each session:
+From Equation (\ref{markup_px_eqb}) and Equation (\ref{eqn:markup_px_cont}), it is reasonable to assume that $D_t$ will include a linear cost component proportional to the trading sizes under each session:
 \begin{equation}\label{short_term_deviation}
   D_t = \alpha B_0 + E_t \beta
 \end{equation}
@@ -350,7 +353,7 @@ where
 \begin{itemize}
   \item $B_0$ is the block trade size at the end of the call auction
   \item $E_t$ is the continuous trading rate of the liquidity trader
-  \item $\alpha$ and $\beta$ are the cost penalty factor for aggressing the book during the call auction and continuous auction, respectively. We have $\alpha=\frac{1}{b_e}$ and $\beta=\frac{1}{b_c}$ based on Equation (\ref{markup_px_eqb}) and Equation (\ref{markup_px_cont}), respectively.
+  \item $\alpha$ and $\beta$ are the cost penalty factor for aggressing the book during the call auction and continuous auction, respectively. We have $\alpha=\frac{1}{b_e}-\frac{e^{V_0}}{2 b_e}$ and $\beta=\frac{1}{b_c}$ based on Equation (\ref{markup_px_eqb}) and Equation (\ref{eqn:markup_px_cont}), respectively.
 \end{itemize}
 Equation (\ref{short_term_deviation}) is similar to what has been described as the "temporary impact" term in in the pioneering works of (\cite{BertimasLo1999}) and (\cite{AlmgrenChriss2000}). On the other hand, from Equation (\ref{resilence_term}), we have the expected spillover cost of trading during call auction to continuous phase is:
 \[
@@ -421,7 +424,7 @@ We also assume that there is only one market maker and only he or she trades wit
 The source of private information is also a vital assumption in our model. We assume that the market maker derives his valuation from public information, which include, but not limited to, the following factors:
 \begin{itemize}
   \item Public order flow, with or without identity.
-  \item General market information, such as index futures movement before equity market opening. 
+  \item General market information, such as index futures movement before equity market opening.
   \item Price continuity from previous day's closing price. In absence of any fundamental news, it is reasonable to expect the opening price to be close to the previous day's closing price.
 \end{itemize}
 
@@ -431,7 +434,7 @@ Another deviation is the inventory management effects of the market maker. In ou
   \item The auction matching volume is usually much larger than a normal trade during continuous phase, accounted for a significant fraction of the daily trading volume.
 \end{itemize}
 
-Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will make profit after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the gain from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his gain. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time. 
+Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will make profit after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the gain from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his gain. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time.
 
 With those caveats in mind, we can proceed to the empirical analysis of NASDAQ data to estimate the liquidation cost of trading in both auctions compared to only during the continuous auction.
 
@@ -445,23 +448,106 @@ Opening auction is NASDAQ is called \textbf{Opening Cross}. While similar to the
 \begin{itemize}
   \item Before the opening bell at 9:30 EST, NASDAQ allows investors to submit orders to two different books: a continuous book and an opening cross book. Orders submitted to the continuous book will be matched immediately and disseminate in the market data feed. Orders submitted to the opening cross book will be withheld to be matched later and are not visible in the market data feed.
   \item At 9:30 EST, the opening cross book and the continuous book will be merged together to form a single book, and a Opening Cross price will be calculated based on the following three rules, similar to our Walrasian matching rule:
-  \begin{itemize}
-    \item Maximize the number of shares executed.
-    \item Minimize the imbalance of Cross orders.
-    \item Minimize the distance from the Nasdaq inside bid-ask midpoint.
-  \end{itemize}
-  Matched orders and total matching quantity from the Opening Cross will then be disseminated in the market data feed. Market is considered to be in the continuous trading phase at this point of time.  
+        \begin{itemize}
+          \item Maximize the number of shares executed.
+          \item Minimize the imbalance of Cross orders.
+          \item Minimize the distance from the Nasdaq inside bid-ask midpoint.
+        \end{itemize}
+        Matched orders and total matching quantity from the Opening Cross will then be disseminated in the market data feed. Market is considered to be in the continuous trading phase at this point of time.
 \end{itemize}
 
 While the presence of the continuous book during the call auction period deviates from our assumption, it makes little difference in practice due to limited volume transacted during this period. On the other hand, the hidden nature of the Opening Cross orders mean that we cannot directly derive the cost of aggressing the book during the call auction. Fortunately, based on the arguments in subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we can infer the cost of trading during the call auction from the spread and matching volume immediate upon market opening.
 
-The continuous auction ''in the NASDAQ exchange, on the other hand, is similar to our model.
+The continuous auction in the NASDAQ exchange, on the other hand, is similar to our model.
 
 \subsection{Data description}
 
-Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock.
+Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock. Given the dataset of 3500 NASDAQ-listed stocks, we pick 25 random stocks with the following constraints:
+\begin{itemize}
+  \item Since we do not account for the value of the queue priority in our market maker's modelling, we avoid selecting stocks with tick size higher than 10 basis points in our sample.
+  \item We avoid low liquidity stock by selecting ones higher than 10M daily traded notional, which is roughly the first quartile of our sample.
+\end{itemize}
 
-As suggested in (some papers), the relative tick size of the stock may have certain effects on the cost of trading. A small tick stock will have 
+Given those constraints, we have the stock list in the Appendix, along with their sectors and fundamental statistics. Our analysis use 1 month of data, from 01/10/2019 to 31/10/2019.
+
+\subsection{Methodology}
+
+In order to estimate the cost of trading, we need to estimate three factors:
+\begin{itemize}
+  \item The temporary book aggressing cost factor $\alpha$ before market opening in Equation (\ref{eqn:mm_eval_eqb})
+  \item The temporary book aggressing cost factor $\beta$ during the continuous auction in Equation (\ref{eqn:mm_eval_cont})
+  \item The spread recovery factor $\rho$ post opening auction in Equation (\ref{eqn:recovery_term_eqb})
+\end{itemize}
+
+We will describe our estimation methodology for each factors in the following.
+
+\subsubsection{Estimation of cost factor $\alpha$}
+
+Based on Equation (\ref{eqn:expected_spread}), we can estimate the coefficient $b_e$ as
+\[
+  \hat{b_e} = \frac{\bar{V_e}}{\bar{\zeta_e}}
+\]
+where
+\begin{itemize}
+  \item $\bar{V_e}$ is the average matching volume at the open.
+  \item $\bar{\zeta_e}$ is the average spread at the open.
+\end{itemize}
+
+The estimation of cost factor $\alpha$ will then be
+\[
+  \hat{\alpha} = \frac{2 - e^{\bar{V_e}}}{\hat{b_e}}
+\]
+
+We also perform the Jarque–Bera test to ensure the log distribution of the opening matching volume is normally distributed as we have assumed in Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}).
+
+\subsubsection{Estimation of cost factor $\beta$}
+
+Equation (\ref{eqn:markup_px_cont}) allows us to estimate cost factor $\beta$ directly from the liquidity posted in the book, with a slight adjustment. Since Equation (\ref{eqn:markup_px_cont}) is in terms of average price, we need to convert the price of the book to average price from the best bid-offer level, as illustrated in Table (\ref{tbl:bookAvgPxConversion}). Given the cumulative sum quantity as the independent variable $X$ and the average price as dependent variable $Y$, we have the $\beta$ estimate in a linear regression equation
+
+ \[
+ Y_t = const + \beta * X_t + e_t
+ \]
+
+One caveat is the period of observation for the regression. Given the discussion in Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we would want to avoid the transition period immediately after the opening. To identify this period, we perform two-sample t-test on consecutive 5-minute bin of data to determine if the average spread has stabilize. Specifically, given $\zeta_t$ as the average spread of the current bin and $\zeta_{t+1}$ as the average spread of the next 5-minute bin, the null hypothesis is:
+\[
+  H_0: \zeta_t = \zeta_{t+1}
+\]
+where the sample statistics of the spread mean is calculated as
+\[
+  \bar{\zeta_t} = \frac{\sum_{i=1}^N  \sum_{j=1}^5 \zeta_{ij}}{N*5}
+\]
+where $N$ is the number of days in our sample, and we measure the spread $\zeta_{ij}$ every 1 minute in each of the 5-minute bin. When we find the first 5-minute bin that we cannot reject the null hypothesis at $5 \%$ confidence level, we use the data in the bin as data for the regression. The sample statistics for $X$ and $Y$ is estimated similarly to the spread mean, where we bootstrap the average of 1-minute interval spread and cumulative sum quantity of the bin as sample data point. Furthermore, we use the data in the identified transition period to measure the recovery speed of the spread in the next subsection.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|c|l|}
+    \hline
+    \textbf{Buy} & \textbf{Price} & \textbf{Sell} & \textbf{Sum} & \multicolumn{1}{c|}{\textbf{Average Price}} \\ \hline
+                 & 56             & 4000          & 14000        & 55.286                                  \\ \hline
+                 & 55             & 10000         & 10000        & 55                                      \\ \hline
+    900          & 54             &               & 900          & 54                                      \\ \hline
+    100          & 53             &               & 1000         & 53.9                                    \\ \hline
+    4000         & 52             &               & 5000         & 52.317                                  \\ \hline
+  \end{tabular}
+  \caption{A sample orderbook with average price calculated for each level. For example, the average price of the offer level 56 is $(55*10000+56*4000)/14000 = 55.286$}.
+  \label{tbl:bookAvgPxConversion}
+\end{table}
+
+\subsubsection{Estimation of spread recovery factor $\rho$}
+
+Given the transition period, we measure the average spread on a 1-minute interval:
+\[
+  \bar{\zeta_j} = \frac{\sum_{i=1}^N p_i}{N}
+\]
+where $j$ is the index of 1-minute interval, and $N$ is number of days in our dataset. From the time series $p_j$ we can perform an exponential linear regression to estimate $\rho$. We consider the following exponential model:
+\[
+  y = \theta e^{-\rho t}
+\]
+where the independent variable $t$ is number of seconds since market opening, and the dependent variable $y$ represented the average spread $\bar{\zeta_j}$.
+
+\subsection{Summary}
+
+<To be written>
 
 \section{Conclusion}\label{secConclusion}
 We shows that when the cost of trading in the call auction is comparable to the continuous trading phase, our strategy yields significant cost savings. Subsequent research on different forms of market impact under both auctions, and extending to multi-phase auction market, can be conducted in the future to yield more interesting findings.
@@ -496,7 +582,7 @@ We shows that when the cost of trading in the call auction is comparable to the 
     \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (B_0 \alpha e^{-\rho s} (\hat{E_s} + \epsilon {v'}_s) + \beta (\hat{E_s} + \epsilon {v'}_s)^2) ds|_{\epsilon=0}=0
   \]
   \[
-    \Leftrightarrow \frac{d}{d\epsilon} \left[\int_0^T (B_0 \alpha e^{-\rho s} \hat{E_s} + \beta \hat{D_t}^2 ) ds  + \int_0^T (B_0 \alpha e^{-\rho s}\epsilon {v'}_s + 2\beta\hat{E_s}\epsilon{v'}_s + \beta\epsilon^2{v'}^2_s)ds\right]|_{\epsilon=0}=0
+    \Leftrightarrow \frac{d}{d\epsilon} \left[\int_0^T (B_0 \alpha e^{-\rho s} \hat{E_s} + \beta \hat{E_s}^2 ) ds  + \int_0^T (B_0 \alpha e^{-\rho s}\epsilon {v'}_s + 2\beta\hat{E_s}\epsilon{v'}_s + \beta\epsilon^2{v'}^2_s)ds\right]|_{\epsilon=0}=0
   \]
   \[
     \Leftrightarrow \int_0^T (B_0 \alpha e^{-\rho s} {v'}_s + 2\beta\hat{E_s}{v'}_s + 2\beta\epsilon{v'}^2_s)ds|_{\epsilon=0} = 0
