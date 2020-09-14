@@ -18,12 +18,12 @@
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{systeme}
+\usepackage{algorithmic}
 \usepackage[thinc]{esdiff}
 
 \graphicspath{ {./images/} }
 
 \newtheorem{definition}{Definition}
-\newtheorem{algorithm}{Algorithm}
 
 \title{Optimal liquidation strategy in a mixed call auction and continuous auction market}
 
@@ -299,39 +299,33 @@ Interestingly, the bid-ask spread after market opens reveals the market impact o
         \end{figure}
         }
 \end{itemize}
-The difference in execution prices between two scenarios is the bid-ask spread immediately after market opens, which is
-\begin{equation}\label{eqn:expected_spread}
-  \Delta_p = \frac{V_e}{b_e}
-\end{equation}
-and therefore is linearly proportional to the size of the imbalance during the call auction. Let assume the log size of the imbalance is distributed as
-\[
-  ln(|V_e|) \sim N(V_0, \sigma_{V_0})
-\]
-and there is equal chance of entering each scenario. We then have the expected cost difference per share, given the same block trade size and other factors, between executing in the call auction and during the continuous phase, is:
-\begin{equation}\label{eqn:expected_auction_saving}
-  E[\zeta] =  \frac{e^{V_0}}{2 b_e}
-\end{equation}
-which shows that even with the same pricing functions, the cost of trading during the auction is smaller than during the continuous phase. Heuristically speaking, trading in the call auction offers the liquidity trader a chance equivalent to immediately getting filled into the spread during the continuous trading phase. This allows us to derive the expected markup price that the liquidity trader receives for trading during the opening auction is
-\begin{equation}\label{eqn:exp_markup_px_eqb}
-  p_{avg} = p_0 + \frac{2 - e^{V_0}}{b_e} x_0
-\end{equation}
+As the market maker is buying at the fair price of $p_0$ and selling at a discounted price $p_e$, it is reasonable that he will get filled more on the bid side than the ask side. 
 
-Furthermore, as the market maker is buying at the fair price of $p_0$ and selling at a discounted price $p_e$, it is reasonable that he will get filled more on the bid side than the ask side. Under Scenario 2, this has no effect on the liquidity trader, as the liquidity trader will keep hitting the bid to sell while the market maker will try to improve the offer. However, under Scenario 1, this results in an ongoing penalty cost to the liquidity trader that will decay over time, as he will need to lift the offer to sell. Let the speed of liquidation of the market maker be $\rho$ and $V_t$ be the remaining position of the market maker acquired from the call auction in Scenario 1. Consequently, we have
-\[
-  dV_t = -\rho V_t
-\]
-\[
-  V_t[0]=V_e
-\]
-\begin{equation}\label{eqn:recovery_term_eqb}
-  \Leftrightarrow V_t = V_e e^{-\rho t}
-\end{equation}
-The resulting spread due to our trading during the call auction at time $t$ will be
+\begin{itemize}
+  \item Under Scenario 1, trading in the call auction results in an ongoing penalty cost to the liquidity trader that will decay over time, as he will need to lift the offer to sell. Let the speed of liquidation of the market maker be $\rho$ and $V_t$ be the remaining position of the market maker acquired from the call auction in Scenario 1. Consequently, we have
+  \[
+    dV_t = -\rho V_t
+  \]
+  \[
+    V_t[0]=(V_e + B_0)
+  \]
+  \begin{equation}\label{eqn:recovery_term_eqb}
+    \Leftrightarrow V_t = (V_e + B_0) e^{-\rho t}
+  \end{equation}
+  where $B_0$ is the liquidity trader's block trade size during auction. The resulting spread due to our trading during the call auction at time $t$ will be
+  \begin{equation}\label{resilence_term}
+    \zeta_t = \frac{e^{-\rho t}}{b_e}  (V_e + B_0)
+  \end{equation}
+  
+  Therefore, we would expect the spread to be wide initially, and slowly closing due to the inventory management effects from the market maker. This is in agreement with current empirical evidence that the bid-ask spread narrows shortly after market opens. 
+  \item Under Scenario 2, trading in the call auction has no "spillover" effect on the liquidity trader, as the liquidity trader will keep hitting the bid to sell while the market maker will try to improve the offer. 
+\end{itemize}
+
+As this "spillover" cost only happens half of the time, the markup cost to the liquidity trader during this transition period is:
+
 \begin{equation}\label{resilence_term}
-  \zeta_t = \frac{e^{-\rho t}}{b_e}  V_e
+  \zeta_t = \frac{e^{-\rho t}}{2 b_e}  (V_e + B_0)
 \end{equation}
-
-Therefore, we would expect the spread to be wide initially, and slowly closing due to the inventory management effects from the market maker. This is in aggrement with current empirical evidence that the bid-ask spread narrows shortly after market opens.
 
 \subsection{Optimal liquidation strategy in a mixed auction market}
 
@@ -357,17 +351,16 @@ where
 \end{itemize}
 Equation (\ref{short_term_deviation}) is similar to what has been described as the "temporary impact" term in in the pioneering works of (\cite{BertimasLo1999}) and (\cite{AlmgrenChriss2000}). On the other hand, from Equation (\ref{resilence_term}), we have the expected spillover cost of trading during call auction to continuous phase is:
 \[
-  R_t = \alpha B_0 e^{-\rho t}
+  R_t = \alpha (B_0 + \bar{V_e}) e^{-\rho t}
 \]
-
-The short term deviation term $D_t$ is then
+where $\bar{V_e}$ is the expected matching quantity. The short term deviation term $D_t$ is then
 \[
   D_t = \underbrace{\alpha B_0 }_\text{Cost of aggressing the book at the end of the call auction} +
-  \underbrace{\alpha B_0 e^{-\rho t}}_\text{Spillover cost from call auction} +  \underbrace{\beta E_t}_\text{Cost of aggressing the book during continuous auction}
+  \underbrace{\alpha (B_0 + \bar{V_e}) e^{-\rho t}}_\text{Spillover cost from call auction} +  \underbrace{\beta E_t}_\text{Cost of aggressing the book during continuous auction}
 \]
 and the market impact cost of trading is
 \begin{equation}\label{cost_equation_all}
-  C_t = \alpha B_0^2 + \int_0^t \alpha B_0 e^{-\rho s} E_s ds + \int_0^t \beta E_s^2 ds
+  C_t = \alpha B_0^2 + \int_0^t \alpha (B_0 + \bar{V_e}) e^{-\rho s} E_s ds + \int_0^t \beta E_s^2 ds
 \end{equation}
 which we can use to derive an optimal strategy for the liquidity trader. Let assume the liquidity trader wants to unwind a large position, and he has the option to exercise his trades in both the call auction and the continuous auction. We have the following notations regarding his trading strategy:
 
@@ -382,29 +375,34 @@ The total cost of his strategy is
 \[
   C = \alpha B_0^2  + \alpha \int_0^T B_0 e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
 \]
-
-Based on the Proof (\ref{proof:optimal-strategy}) in the Appendix, we have the optimal size of block trade in the call auction is:
+where $E_t$ is assumed to be monotonic. Based on the Proof (\ref{proof:optimal-strategy}) in the Appendix, we have the optimal size of block trade in the call auction is:
 \[
   B_0 = \frac{F_1}{F_2} Q_0
 \]
 where
 \[
-  F_1 = 4 e^{T \rho} \beta \rho [-\alpha + e^{T \rho} (\alpha + 2 \beta \rho)]
+  F_1 = 4 e^{T \rho} \hat{\beta} \rho [-\alpha + e^{T \rho} (\alpha + 2 \hat{\beta} \rho)]
 \]
 \[
-  F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)
-  + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
+  F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \hat{\beta} \rho)
+  + e^{2 T \rho} [8 \hat{\beta} \alpha \rho + 8 \hat{\beta} (T \alpha + \hat{\beta}) \rho^2 + \alpha^2 (2 - T \rho)]
 \]
-which is a fraction of the total position $Q_0$. The optimal trading strategy during continuous session is:
+The $\hat{\beta}$ is an optimized value of $\beta$ that satistfies the monotonic constraints using the maximin algorithm in the proof. As a result, the optimal block trade $B_0$ during auction is a fraction of the total position $Q_0$ that depends on the ratio of the cost impact factors. The optimal trading strategy during continuous session is:
 \[
-  \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \beta \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \beta \rho )}{2 T \beta \rho} t
+  \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \hat{\beta} \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \hat{\beta} \rho )}{2 T \hat{\beta} \rho} t
 \]
 
 which is a combination of a TWAP with an exponentially decayed component to account for the spillover effect. The total cost of trading is then
 \[
-  C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \beta \rho + \{(e^{-T \rho} - 1) \alpha - 2 \beta \rho\} B_0]^2}{8 T \beta \rho^2}
+  C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \hat{\beta} \rho + \{(e^{-T \rho} - 1) \alpha - 2 \hat{\beta} \rho\} B_0]^2}{8 T \hat{\beta} \rho^2}
 \]
+A sample optimal curve of the strategy is plotted in Figure (\ref{fig:optimal_curve_strategy}).
 
+\begin{figure}[h]
+  \includegraphics[width=\textwidth]{OptimalStrategyCurve}
+  \caption{Sample optimal trading strategy's execution curve during continuous trading phase. The shape of the curve reflects the nature of the cost, in which the rate of execution is speed up over time as the market impact of the block trade during auction subsidizing.}
+  \label{fig:optimal_curve_strategy}
+\end{figure}
 
 \subsection{Summary}
 
@@ -495,7 +493,7 @@ where
 
 The estimation of cost factor $\alpha$ will then be
 \[
-  \hat{\alpha} = \frac{2 - e^{\bar{V_e}}}{\hat{b_e}}
+  \hat{\alpha} = \frac{1}{\hat{b_e}}
 \]
 
 We also perform the Jarque–Bera test to ensure the log distribution of the opening matching volume is normally distributed as we have assumed in Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}).
@@ -504,9 +502,9 @@ We also perform the Jarque–Bera test to ensure the log distribution of the ope
 
 Equation (\ref{eqn:markup_px_cont}) allows us to estimate cost factor $\beta$ directly from the liquidity posted in the book, with a slight adjustment. Since Equation (\ref{eqn:markup_px_cont}) is in terms of average price, we need to convert the price of the book to average price from the best bid-offer level, as illustrated in Table (\ref{tbl:bookAvgPxConversion}). Given the cumulative sum quantity as the independent variable $X$ and the average price as dependent variable $Y$, we have the $\beta$ estimate in a linear regression equation
 
- \[
- Y_t = const + \beta * X_t + e_t
- \]
+\[
+  Y_t = const + \beta * X_t + e_t
+\]
 
 One caveat is the period of observation for the regression. Given the discussion in Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we would want to avoid the transition period immediately after the opening. To identify this period, we perform two-sample t-test on consecutive 5-minute bin of data to determine if the average spread has stabilize. Specifically, given $\zeta_t$ as the average spread of the current bin and $\zeta_{t+1}$ as the average spread of the next 5-minute bin, the null hypothesis is:
 \[
@@ -523,11 +521,11 @@ where $N$ is the number of days in our sample, and we measure the spread $\zeta_
   \begin{tabular}{|c|c|c|c|l|}
     \hline
     \textbf{Buy} & \textbf{Price} & \textbf{Sell} & \textbf{Sum} & \multicolumn{1}{c|}{\textbf{Average Price}} \\ \hline
-                 & 56             & 4000          & 14000        & 55.286                                  \\ \hline
-                 & 55             & 10000         & 10000        & 55                                      \\ \hline
-    900          & 54             &               & 900          & 54                                      \\ \hline
-    100          & 53             &               & 1000         & 53.9                                    \\ \hline
-    4000         & 52             &               & 5000         & 52.317                                  \\ \hline
+                 & 56             & 4000          & 14000        & 55.286                                      \\ \hline
+                 & 55             & 10000         & 10000        & 55                                          \\ \hline
+    900          & 54             &               & 900          & 54                                          \\ \hline
+    100          & 53             &               & 1000         & 53.9                                        \\ \hline
+    4000         & 52             &               & 5000         & 52.317                                      \\ \hline
   \end{tabular}
   \caption{A sample orderbook with average price calculated for each level. For example, the average price of the offer level 56 is $(55*10000+56*4000)/14000 = 55.286$}.
   \label{tbl:bookAvgPxConversion}
@@ -555,74 +553,71 @@ We shows that when the cost of trading in the call auction is comparable to the 
 \section{Appendix}
 
 \begin{proof}[Derivation of the optimal trading strategy]\label{proof:optimal-strategy}
-  The cost of trading is:
+  The cost of trading in both auction given the notations in the paper is:
   \[
-    C = \alpha B_0^2  + \alpha \int_0^T B_0 e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
+    C = \alpha B_0^2  + \alpha \int_0^T (B_0 + V_e) e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
+  \]
+
+  We need to find a pair of $(X_t, E_t)$ as a stationary point (function) of the functional. We also need to impose monotonic condition on $X_t$ to prevent buying, as the recovery term does not apply to the opposite side. We therefore are interested in the variational problem:
+  \[
+    \min_{(X_t, E_t)} \int_0^T (B_0 + V_e) \alpha e^{-\rho s} E_s ds + \int_0^T \beta E_s^2 ds
+  \]
+  subject to
+  \[
+    E_t > 0,\ \forall t
+  \]
+
+  We use the Euler-Lagrange equation on the following:
+  \[
+    \int_0^T [ B_0 \alpha e^{-\rho s} E_s + (\beta + \lambda I_{E_s \leq 0}) E_s^2 ] ds=\int_0^T L(s, X_s, E_s) ds
+  \]
+  where $\lambda$ is the Lagrange multiplier and $L(s, X_s, E_s)$ is the Lagrangian of the functional. Let
+  \[
+    \hat{\beta} =  \frac{\int_0^T (\beta + \lambda I_{E_s \leq 0}) E_s^2 ds}{\int_0^T E_s^2 ds}
+  \]
+  we then can solve for the following maximin optimization problem
+  \[
+    \max_{\hat{\beta}} \min_{E_t} \left[ \alpha B_0^2  + \alpha \int_0^T B_0 e^{-\rho s} E_s ds + \hat{\beta} \int_0^T E_s^2 ds \right]
+  \]
+
+  Consequently, we optimize for the following functional to find the optimal $E_t$ for each $\hat{beta}$
+  \[
+    \int_0^T [ B_0 \alpha e^{-\rho s} E_s +  \hat{\beta} E_s^2 ] ds=\int_0^T L(s, X_s, E_s) ds
   \]
   First we assume $B_0$ is static, and solve the cost of trading during continuous phase:
   \[
-    C_c = \int_0^T B_0 \alpha e^{-\rho s} E_s ds + \int_0^T \beta E_s^2 ds = \int_0^T L(s, Xs, Es) ds
+    C_c = \int_0^T B_0 \alpha e^{-\rho s} E_s ds + \int_0^T \beta E_s^2 ds
   \]
-  where $ L(s, Xs, Es)$ is the Lagrangian of the functional. We need to find a pair of $(X_t, D_t)$ as a stationary point (function) of the functional. We adopt the arguments in the derivation of the Euler-Lagrange equation as follows:
-  Let $v_t$ be an admissible perturbation function, $\epsilon$ is a scalar, and
+  which has the following Euler-Lagrange equation
   \[
-    X_t = \hat{X_t} + \epsilon v_t
-  \]
-  \[
-    E_t = \hat{E_t} + \epsilon {v'}_t
-  \]
-  where $\hat{X_t}$ and $\hat{E_t}$ are the optimal solution. To minimize when $\epsilon=0$, we can state that
-  \[
-    \frac{d}{d\epsilon} \int_0^T L(s, Xs, Es) ds|_{\epsilon=0}=0
+    \frac{\alpha}{2 \hat{\beta}} B_0  e^{-\rho s} +E_s = A
   \]
   \[
-    \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (B_0 \alpha e^{-\rho s} E_s + \beta E_s^2) ds|_{\epsilon=0}=0
+    \Leftrightarrow \hat{E_s} = A - \frac{B_0 \alpha}{2\hat{\beta}} e^{-\rho s}
   \]
   \[
-    \Leftrightarrow \frac{d}{d\epsilon} \int_0^T (B_0 \alpha e^{-\rho s} (\hat{E_s} + \epsilon {v'}_s) + \beta (\hat{E_s} + \epsilon {v'}_s)^2) ds|_{\epsilon=0}=0
-  \]
-  \[
-    \Leftrightarrow \frac{d}{d\epsilon} \left[\int_0^T (B_0 \alpha e^{-\rho s} \hat{E_s} + \beta \hat{E_s}^2 ) ds  + \int_0^T (B_0 \alpha e^{-\rho s}\epsilon {v'}_s + 2\beta\hat{E_s}\epsilon{v'}_s + \beta\epsilon^2{v'}^2_s)ds\right]|_{\epsilon=0}=0
-  \]
-  \[
-    \Leftrightarrow \int_0^T (B_0 \alpha e^{-\rho s} {v'}_s + 2\beta\hat{E_s}{v'}_s + 2\beta\epsilon{v'}^2_s)ds|_{\epsilon=0} = 0
-  \]
-  \[
-    \Leftrightarrow \int_0^T (B_0 \alpha e^{-\rho s}  + 2\beta\hat{E_s}) {v'}_s ds = 0
-  \]
-  Using integration by parts and the natural boundaries conditions $v(0)=0$ and $v(T)=0$, we have
-  \[
-    B_0 \alpha e^{-\rho s}  + 2\beta\hat{E_s} = C
-  \]
-  \[
-    \Leftrightarrow \frac{B_0 \alpha}{2\beta} e^{-\rho s}  + \hat{E_s} = A
-  \]
-  \[
-    \Leftrightarrow \hat{E_s} = A - \frac{B_0 \alpha}{2\beta} e^{-\rho s}
-  \]
-  \[
-    \Leftrightarrow \hat{X_t} - \hat{X_0} = At + B - \frac{B_0 \alpha}{2\beta \rho} (1 - e^{-\rho t})
+    \Leftrightarrow \hat{X_t} - \hat{X_0} = At + B - \frac{B_0 \alpha}{2\hat{\beta} \rho} (1 - e^{-\rho t})
   \]
   Using the boundary conditions:
   \[
-    \hat{X_T} = 0
+    \hat{X_0} = 0
   \]
   \[
-    \hat{X_0} = Q_0 - B_0
+    \hat{X_T} = Q_0 - B_0
   \]
   we have
   \[
     B = 0
   \]
   \[
-    A = \frac{2 (B_0 - Q_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {2 T}
+    A = \frac{2 (B_0 - Q_0 + \lambda T) + \frac{(1 - e^{-T \rho})}{\hat{\beta} \rho} B_0 \alpha} {2 T}
   \]
   \[
-    \Leftrightarrow \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \beta \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \beta \rho )}{2 T \beta \rho} t
+    \Leftrightarrow \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \hat{\beta} \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \hat{\beta} \rho )}{2 T \hat{\beta} \rho} t
   \]
   The total cost of trading is then
   \[
-    C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \beta \rho + \{(e^{-T \rho} - 1) \alpha - 2 \beta \rho\} B_0]^2}{8 T \beta \rho^2}
+    C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \hat{\beta} \rho + \{(e^{-T \rho} - 1) \alpha - 2 \hat{\beta} \rho\} B_0]^2}{8 T \hat{\beta} \rho^2}
   \]
   Taking the first derivative w.r.t. $B_0$ and solve for $B_0$, we have
   \[
@@ -630,14 +625,16 @@ We shows that when the cost of trading in the call auction is comparable to the 
   \]
   where
   \[
-    F_1 = 4 e^{T \rho} \beta \rho [-\alpha + e^{T \rho} (\alpha + 2 \beta \rho)]
+    F_1 = 4 e^{T \rho} \hat{\beta} \rho [-\alpha + e^{T \rho} (\alpha + 2 \hat{\beta} \rho)]
   \]
   \[
     \begin{split}
-      F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)\ \\
-      + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
+      F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \hat{\beta} \rho)\ \\
+      + e^{2 T \rho} [8 \hat{\beta} \alpha \rho + 8 \hat{\beta} (T \alpha + \hat{\beta}) \rho^2 + \alpha^2 (2 - T \rho)]
     \end{split}
   \]
+  Given the cost of the optimal strategy for each  $\hat{\beta}$, we then can find the maximum value of $\hat{\beta}$ using any derivative-free root finding algorithm, such as the Nelder-Mead algorithm (\cite{NelderMead1965}).
+
 \end{proof}
 
 \bibliographystyle{plain}
