@@ -373,34 +373,47 @@ which we can use to derive an optimal strategy for the liquidity trader. Let ass
 
 The total cost of his strategy is
 \[
-  C = \alpha B_0^2  + \alpha \int_0^T B_0 e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
+  C = \alpha B_0^2  + \alpha \int_0^T \frac{B_0 + V_e}{2} e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
 \]
 where $E_t$ is assumed to be monotonic. Based on the Proof (\ref{proof:optimal-strategy}) in the Appendix, we have the optimal size of block trade in the call auction is:
 \[
-  B_0 = \frac{F_1}{F_2} Q_0
+  B_0 = \frac{Q_0 F_{11} + V_e F_{12}}{F_2}
 \]
 where
 \[
-  F_1 = 4 e^{T \rho} \bar{\beta} \rho [-\alpha + e^{T \rho} (\alpha + 2 \bar{\beta} \rho)]
+  F_{11} = 8 e^{T \rho} \beta \rho [\alpha - e^{T \rho} (\alpha - 4 \beta \rho)]
 \]
 \[
-  F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \bar{\beta} \rho)
-  + e^{2 T \rho} [8 \bar{\beta} \alpha \rho + 8 \bar{\beta} (T \alpha + \bar{\beta}) \rho^2 + \alpha^2 (2 - T \rho)]
+  F_{12} = (e^{T \rho}-1) \alpha [\alpha (2+T \rho) + e^{T \rho} (8 \beta \rho + \alpha (T \rho - 2 ))]
 \]
-The $\bar{\beta}$ is an optimized value of $\beta$ that satistfies the monotonic constraints using the maximin algorithm in the proof. As a result, the optimal block trade $B_0$ during auction is a fraction of the total position $Q_0$ that depends on the ratio of the cost impact factors. The optimal trading strategy during continuous session is:
 \[
-  \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \bar{\beta} \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \bar{\beta} \rho )}{2 T \bar{\beta} \rho} t
+  \begin{split}
+    F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)\ \\
+    + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
+  \end{split}
 \]
-
-which is a combination of a TWAP with an exponentially decayed component to account for the spillover effect. The total cost of trading is then
+The optimal trading strategy during continuous session is:
 \[
-  C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \bar{\beta} \rho + \{(e^{-T \rho} - 1) \alpha - 2 \bar{\beta} \rho\} B_0]^2}{8 T \bar{\beta} \rho^2}
+  E_t = A - B_0 \frac{\alpha e^{-t \rho}}{4 \beta}
 \]
-A sample optimal curve of the strategy is plotted in Figure (\ref{fig:optimal_curve_strategy}).
+\[
+  X_t = A t - B_0 \frac{\alpha (1- e^{-t \rho})}{4 \beta \rho}
+\]
+where
+\[
+  A =   \frac{4 (Q_0 - B_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {4 T}
+\]
+The optimal trading strategy during auction phase is a combination of a TWAP with an exponentially decayed component to account for the spillover effect. A sample optimal curve of the strategy is plotted in Figure (\ref{fig:optimal_curve_strategy}). The corresponding allocation between the auction's block trade and the continuous trading strategy's size is in Figure (\ref{fig:optimal_sizes}).
 
 \begin{figure}[h]
-  \includegraphics[width=\textwidth]{OptimalStrategyCurve}
-  \caption{Sample optimal trading strategy's execution curve during continuous trading phase. The shape of the curve reflects the nature of the cost, in which the rate of execution is speed up over time as the market impact of the block trade during auction subsidizing.}
+  \includegraphics[width=\textwidth]{SampleTradeSize}
+  \caption{Sample allocation between auction's block trade and the continuous trading strategy's size, using data from stock ACGL in October 2019. Compared to a pure TWAP trading stategy, the optimal stategy allocates 33.9\% of the total position to be executed during the auction phase.}
+  \label{fig:optimal_sizes}
+\end{figure}
+
+\begin{figure}[h]
+  \includegraphics[width=\textwidth]{SampleTradeCurve}
+  \caption{Sample optimal trading strategy's execution curve during continuous trading phase. The shape of the optimal trading curve reflects the nature of the cost, in which the rate of execution is speed up over time as the market impact of the auction subsidizing.}
   \label{fig:optimal_curve_strategy}
 \end{figure}
 
@@ -558,45 +571,19 @@ We shows that when the cost of trading in the call auction is comparable to the 
     C = \alpha B_0^2  + \alpha \int_0^T \frac{B_0 + V_e}{2} e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
   \]
 
-  We need to find a pair of $(X_t, E_t)$ as a stationary point (function) of the functional. We also need to impose monotonic condition on $X_t$ to prevent buying, as the recovery term does not apply to the opposite side. We therefore are interested in the variational problem:
+  We need to find a tuple of $(B_0, E_t, X_t)$ as a stationary point (function) of the functional. First we assume $B_0$ is static, and solve the cost of trading during continuous phase:
   \[
-    \min_{(X_t, E_t)} \int_0^T \frac{B_0 + V_e}{2} \alpha e^{-\rho s} E_s ds + \int_0^T \beta E_s^2 ds
-  \]
-  subject to
-  \[
-    E_t > 0,\ \forall t
-  \]
-
-  We use the Euler-Lagrange equation on the following:
-  \[
-    \int_0^T [ \frac{B_0 + V_e}{2} \alpha e^{-\rho s} E_s + (\beta + \lambda I_{E_s \leq 0}) E_s^2 ] ds=\int_0^T L(s, X_s, E_s) ds
-  \]
-  where $\lambda$ is the Lagrange multiplier and $L(s, X_s, E_s)$ is the Lagrangian of the functional. Let
-  \[
-    \bar{\beta} =  \frac{\int_0^T (\beta + \lambda I_{E_s \leq 0}) E_s^2 ds}{\int_0^T E_s^2 ds}
-  \]
-  we then can solve for the following maximin optimization problem
-  \[
-    \max_{\bar{\beta}} \min_{E_t} \left[ \alpha B_0^2  + \alpha \int_0^T \frac{B_0 + V_e}{2} e^{-\rho s} E_s ds + \bar{\beta} \int_0^T E_s^2 ds \right]
-  \]
-
-  Consequently, we optimize for the following functional to find the optimal $E_t$ for each $\bar{\beta}$
-  \[
-    \int_0^T [ \frac{B_0 + V_e}{2} \alpha e^{-\rho s} E_s +  \bar{\beta} E_s^2 ] ds=\int_0^T L(s, X_s, E_s) ds
-  \]
-  First we assume $B_0$ is static, and solve the cost of trading during continuous phase:
-  \[
-    C_c = \int_0^T \frac{B_0 + V_e}{2} \alpha e^{-\rho s} E_s ds + \int_0^T  \bar{\beta} E_s^2 ds
+    C_c = \int_0^T \frac{B_0 + V_e}{2} \alpha e^{-\rho s} E_s ds + \int_0^T  \beta E_s^2 ds
   \]
   which has the following Euler-Lagrange equation
   \[
-    \frac{\alpha}{4 \bar{\beta}} B_0  e^{-\rho s} +E_s = A
+    \frac{\alpha}{4 \beta} B_0  e^{-\rho s} +E_s = A
   \]
   \[
-    \Leftrightarrow \hat{E_s} = A - \frac{\alpha}{4 \bar{\beta}} B_0 e^{-\rho s}
+    \Leftrightarrow \hat{E_s} = A - \frac{\alpha}{4 \beta} B_0 e^{-\rho s}
   \]
   \[
-    \Leftrightarrow \hat{X_t} - \hat{X_0} = At + B - \frac{\alpha}{4 \bar{\beta} \rho}B_ 0 (1 - e^{-\rho t})
+    \Leftrightarrow \hat{X_t} = At + B - \frac{\alpha}{4 \beta \rho}B_ 0 (1 - e^{-\rho t})
   \]
   Using the boundary conditions:
   \[
@@ -610,30 +597,25 @@ We shows that when the cost of trading in the call auction is comparable to the 
     B = 0
   \]
   \[
-    A = \frac{2 (B_0 - Q_0 + \lambda T) + \frac{(1 - e^{-T \rho})}{\bar{\beta} \rho} B_0 \alpha} {2 T}
+    A = \frac{4 (Q_0 - B_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {4 T}
   \]
+  Taking the first derivative of the cost function $C$ w.r.t. $B_0$ and solve for $B_0$, we have
   \[
-    \Leftrightarrow \hat{X_t} = Q_0 - B_0  - \frac{B_0 \alpha}{2 \bar{\beta} \rho}(1 - e^{-t \rho}) - \frac{e^{-T \rho} (B_0 \alpha - e^{T \rho}B_0 \alpha + 2 e^{T \rho} (Q_0 - B_0) \bar{\beta} \rho )}{2 T \bar{\beta} \rho} t
-  \]
-  The total cost of trading is then
-  \[
-    C = \alpha B_0^2 + \frac{(e^{-2 T \rho} - 1) T \alpha^2 \rho B_0^2 + 2 [2 Q_0 \bar{\beta} \rho + \{(e^{-T \rho} - 1) \alpha - 2 \bar{\beta} \rho\} \frac{B_0 + V_e}{2}]^2}{8 T \bar{\beta} \rho^2}
-  \]
-  Taking the first derivative w.r.t. $B_0$ and solve for $B_0$, we have
-  \[
-    B_0 = \frac{F_1}{F_2} Q_0
+    B_0 = \frac{Q_0 F_{11} + V_e F_{12}}{F_2}
   \]
   where
   \[
-    F_1 = 4 e^{T \rho} \bar{\beta} \rho [-\alpha + e^{T \rho} (\alpha + 2 \bar{\beta} \rho)]
+    F_{11} = 8 e^{T \rho} \beta \rho [\alpha - e^{T \rho} (\alpha - 4 \beta \rho)]
+  \]
+  \[
+    F_{12} = (e^{T \rho}-1) \alpha [\alpha (2+T \rho) + e^{T \rho} (8 \beta \rho + \alpha (T \rho - 2 ))]
   \]
   \[
     \begin{split}
-      F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \bar{\beta} \rho)\ \\
-      + e^{2 T \rho} [8 \bar{\beta} \alpha \rho + 8 \bar{\beta} (T \alpha + \bar{\beta}) \rho^2 + \alpha^2 (2 - T \rho)]
+      F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)\ \\
+      + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
     \end{split}
   \]
-  Given the cost of the optimal strategy for each  $\bar{\beta}$, we then can find the maximum value of $\bar{\beta}$ using any derivative-free root finding algorithm, such as the Nelder-Mead algorithm (\cite{NelderMead1965}).
 
 \end{proof}
 
