@@ -25,7 +25,7 @@
 
 \newtheorem{definition}{Definition}
 
-\title{Optimal liquidation strategy in a mixed call auction and continuous auction market}
+\title{Optimal liquidation strategy in a mixed auction market}
 
 \author{
  Hoang Hai Tran\\
@@ -47,19 +47,28 @@
 \maketitle
 
 \begin{abstract}
-  We analyze the price impact of trading in a mixed auction market, in which the exchange employs both call auction and continuous auction. Based on a multiplayer game settings between a market maker and one or many liquidity takers, we derive a market impact model characterizes both instantaneous and temporary price impact. Our first main result is an unified model of how price discovery and market impact transition from call auction to the continuous auction. Our second main result is that, based on our market impact model, there is an optimal trading strategy with closed-form solution to liquidate a portfolio under both auctions. We furthermore analyze the optimal trading strategy numerically to show the cost efficiency of trading in both auctions compared to trading only in continuous trading auction.
+  We analyze the price impact of trading in a mixed auction market, in which the exchange employs both call auction and continuous auction. Based on a multiplayer game settings between a market maker and one or more liquidity takers, we derive a market impact model which characterizes both instantaneous and temporary price impact. The unified model is able to show how price discovery and market impact transition from the call auction to the continuous auction. Moreover, we provide an optimal trading strategy with closed-form solution to execute a large order under both auctions. The optimal trading strategy is numerically demonstrated with the cost efficiency of trading in both auctions compared to alternative only in the continuous trading auction.
 \end{abstract}
 
 \section{Introduction}
-In modern financial markets, double auction is a standard process of buying and selling shares with multiple sellers and multiple buyers. From an economist's perspective, an auction can be considered a price discovery process, where a competitive equilibrium price is found through interactions among bidders. The price is usually assumed to be the point where supply and demand are equal. The question of how the price reaches its equilibrium points, and how different players use their own information advantages to achieve a preferable price, has attracted researchers from various fields. \cite{Kyle1985} studies how market makers, insider traders and noise traders interact to form an equilibrium price in a continuous trading auction. \cite{AlmgrenChriss2000} discusses how execution can be done optimally in a continuous trading phase under certain market impact assumptions. \cite{Avellaneda2008} derives an equilibrium price from the perspectives of a market maker to provide quotes in a continuous trading auction. This paper is in a similar vein, in which we discuss how price will reach its equilibrium price in a mixed auction market. By taking into account call auction, under different market impact assumptions, we derive the corresponding optimal liquidation strategy for a trader to unwind his position. We provide theoretical evidence that it is indeed cheaper to trade the call auction compared to the continuous auction. Specifically, we examine the impact of trading in a market that operates under two auction models:
+In modern financial markets, double auction is a standard process of buying and selling shares adopted by exchanges. From an economist's perspective, an auction can be considered as a price discovery process. A competitive equilibrium price is found through interactions among bidders where supply and demand are equal. The question of how the price reaches its equilibrium points, and how different players use their own information advantages to achieve a preferable price, has attracted attentions from various fields. \cite{Kyle1985} studies how market makers, insider traders and noise traders interact to form an equilibrium price in a continuous trading auction. \cite{AlmgrenChriss2000} discusses how execution can be done optimally in a continuous trading phase under certain market impact assumptions. \cite{Avellaneda2008} derives an equilibrium price from the perspectives of a market maker to provide quotes in a continuous trading auction. This paper is in a similar vein, in which we discuss how price will reach its equilibrium price in a mixed auction market. By taking into account call auction, under different market impact assumptions, we derive the corresponding optimal liquidation strategy for a trader to unwind his position. We provide theoretical evidence that it is indeed cheaper to trade the call auction compared to the continuous auction. Specifically, we examine the market impact of trading in a market that operates under two auction models:
+
 \begin{itemize}
   \item \textbf{Call auction} Buyers set a maximum price that they want to buy, and sellers set a minimum price that they want to sell. The orders will then be batched together and matched at a price set by the exchange.
   \item \textbf{Continuous auction} Orders are matched continuously based on time and price priority. Participants in the auction can choose to either queue their orders to wait for an opposing trade, or cross the book to match against other's orders.
 \end{itemize}
 
-Historically, the debate of whether the call auction is required along with the continuous auction in the financial market started with the adoption of electronic trading. The transition from manual to automatic trading system around the world began from the early 80s to the late 90s, with Toronto (1977) being the first exchange to implement an electronic matching system. Other exchanges soon followed, including Tokyo (1982), Paris (1986) and Germany (1991). By the end of the 20th century, major exchanges around the world have shifted to electronic trading. Initially, exchanges operate in favor of a continuous trading market, in which orders are matched instantly through out the day. Continuous trading was deemed most suitable for electronic trading because participants can transact immediately. However, as argued in (\cite{Economides1995}), a call auction may be preferred over a continuous trading auction under certain circumstances. Consequently, most exchanges around the world implemented call auction sessions in addition to the continuous trading session. By 2020, major exchanges around the world implement mixed auction mechansim with an opening call auction, followed by a continuous trading session and end the day with a closing call auction.
+We seek to reduce market impact and cost of trading by utilizing both auctions in our liquidation algorithm. The aim is to significantly reduce the cost of trading by exploiting liquidity from both, by answering the following questions:
 
-The adoption of the call auctions has resulted in substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. (\cite{Madhavan2015}) found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of the average trade value. (\cite{Bruno1999}) found similar phenomenon on the Paris Bourse, in which the opening auction accounts for about 10 percent of average daily trade value. (\cite{Carole2006}) has a similar conclusion regarding the Australian Stock Exchange (ASX).
+\begin{itemize}
+  \item What are the relevant factors that affect market impact during both auctions?
+  \item How does the transition of market impact from a call auction into a continuous auction evolve?
+  \item How can we optimize for a liquidation trading strategy, taken into account those factors?
+\end{itemize}
+
+In general, the challenge lies in the different mechanisms of the auctions, and the modelling of market impact during both thereof. By modelling the interaction between different participants in the market, namely between market makers and liquidity takers, we derive the mechanism of market impact under both auctions. From the mechanism, we optimize for a liquidation problem that results in on average 50\% reduction in transaction cost against the classical TWAP solution.
+
+It is not a coincidence that by incorporating call auction into the optimal liquidation problem, we can reduce cost significantly. Historically, the adoption of the call auctions has resulted in substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. (\cite{Madhavan2015}) found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of the average trade volume. (\cite{Bruno1999}) found similar phenomenon on the Paris Bourse, in which the opening auction accounts for about 10 percent of average daily trade value. (\cite{Carole2006}) has a similar conclusion regarding the Australian Stock Exchange (ASX).
 
 A call auction can lower execution costs for participants and improve price discovery process, as suggested in (\cite{Pagano2003}). The reduction in trading costs, such as market impact and adverse selection costs, is achieved through several channels, including (\cite{Carole2006}):
 
@@ -75,12 +84,12 @@ On the other hand, literature on optimal liquidation and market impact has rarel
 Works on optimal execution today focuses more on minimizing the impact of trading during the continuous trading phase, which ignores the fact that the opening auction is usually very liquid and the matched volume represents a significant portion of daily trading volume. For executing a big block order with significant volume, including call auctions are usually more preferable since the execution cost is lower, as shown in our analysis later. Specifically, based on our theoretical framework, we found that:
 
 \begin{itemize}
-  \item There is a potentially large gain from liquidating portion of the position in the call auction, since the call auction provides another venue to take liquidity from.
+  \item The call auction provides another venue to take liquidity from.
   \item Due to inventory management from the market maker, the transition period from the call auction will be characterized with a wide initial spread that will narrow over time. A mixed auction strategy takes into account this effect will reduce transition cost even further.
   \item There is an optimal liquidation strategy to execute trade during both the call auction and the continuous auction that results in better cost optimization than trading in the continuous auction only.
 \end{itemize}
 
-This paper is organized as follows: Section (\ref{sec:AnalyticalFramework}) will present the theoretical framework that we will use to characterize the call auction and optimize our trading strategy. Section (\ref{sec:EmpiricalAnalysis}) will perform empirical analysis based on the theoretical framework to examine their effects on the optimal trading strategy and its cost efficiency. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
+This paper is organized as follows: Section (\ref{sec:AnalyticalFramework}) will present the theoretical framework that we will use to characterize the call auction and optimize our trading strategy. Section (\ref{sec:EmpiricalAnalysis}) will perform empirical analysis based on the theoretical framework to examine their effects on the optimal liquidation strategy and its cost efficiency. Section (\ref{secConclusion}) will conclude the paper with suggestions for further research.
 
 \section{The Analytical Framework}\label{sec:AnalyticalFramework}
 
@@ -417,7 +426,7 @@ The optimal trading strategy during auction phase is a combination of a TWAP wit
 \input{tables/sampleTradeSize.tex}
 
 \begin{figure}[h]
-  \includegraphics[width=\textwidth]{SampleTradeCurve}
+  \includegraphics[width=\textwidth]{images/SampleTradeCurve}
   \caption{Sample optimal trading strategy's execution curve 30 minutes after market opens from auction phase. The shape of the optimal trading curve reflects the nature of the cost, in which the rate of execution is speed up over time as the market impact of the auction subsidizing and the spread narrowing.}
   \label{fig:optimal_curve_strategy}
 \end{figure}
