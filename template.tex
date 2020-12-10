@@ -25,6 +25,8 @@
 
 \newtheorem{definition}{Definition}
 
+\newcommand{\numberOfStocks}{350}
+
 \title{Optimal liquidation strategy in a mixed auction market}
 
 \author{
@@ -333,10 +335,9 @@ As the market maker is buying at the fair price of $p_0$ and selling at a discou
           \Leftrightarrow V_t = (V_e + B_0) e^{-\rho t}
         \end{equation}
         where $B_0$ is the liquidity trader's block trade size during auction. The resulting spread due to our trading during the call auction at time $t$ will be
-        \begin{equation}\label{resilence_term}
+        \[
           \zeta_t = \frac{e^{-\rho t}}{b_e}  (V_e + B_0)
-        \end{equation}
-
+        \]
         Therefore, we would expect the spread to be wide initially, and slowly closing due to the inventory management effects from the market maker. This is in agreement with current empirical evidence that the bid-ask spread narrows shortly after market opens.
   \item Under Scenario 2, trading in the call auction has no "spillover" effect on the liquidity trader, as the liquidity trader will keep hitting the bid to sell while the market maker will try to improve the offer.
 \end{itemize}
@@ -447,6 +448,7 @@ Before moving to empirical analysis, it is imperative to address some stylized f
 We also assume that there is only one market maker and only he or she trades with private information. In practice, there can be multiple agents trading with information. However, as long as the private information is derived from public data, that is, no insider trading, we can assume that all informed agent will have the same "signal" regarding the fair price of the stock, and are only different in their risk aversion factor. Therefore, we can assume that all informed agents are trading with same risk aversion factor, which are represented by the market maker in our model.
 
 The source of private information is also a vital assumption in our model. We assume that the market maker derives his valuation from public information, which include, but not limited to, the following factors:
+
 \begin{itemize}
   \item Public order flow, with or without identity.
   \item General market information, such as index futures movement before equity market opening.
@@ -454,22 +456,38 @@ The source of private information is also a vital assumption in our model. We as
 \end{itemize}
 
 Another deviation is the inventory management effects of the market maker. In our model, there is market maker's inventory management effects on the spread due to the position acquired from the opening auction, but not in the continuous auction. While it would be more complete to account for the inventory management effects in both auctions, our empirical analysis suggests that the inventory management effects of the continuous auction is less prominent compared to the opening auction. Specifically, we observed that
+
 \begin{itemize}
   \item There is little evidence that the bid-ask spread is changed following a trade except near the opening and closing auctions.
   \item The auction matching volume is usually much larger than a normal trade during continuous phase, accounted for a significant fraction of the daily trading volume.
 \end{itemize}
 
-Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will make profit after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the gain from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his gain. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time.
+Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will be profitable after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the gain from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his gain. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time.
 
 With those caveats in mind, we can proceed to the empirical analysis of NASDAQ data to estimate the liquidation cost of trading in both auctions compared to only during the continuous auction.
 
-\section{Empirical Analysis}\label{sec:EmpiricalAnalysis}
+\section{Application: optimal execution for a portfolio of stocks in mixed auction market}\label{sec:EmpiricalAnalysis}
 
-In this section, we will estimate the liquidation cost of trading in both auction for 40 stocks in the NASDAQ exchange using historical data in October 2019. We begin the section with the exchange rules regarding opening call auction and continuous auction of the NASDAQ exchange. After which, we provide description of our data, including how our stocks are picked, and our estimation methodology. Lastly, we provide cross-sectional analysis of our stock portfolio to show how liquidation cost changes with respect to tick size of the stock.
+In this section, we apply our model to the case of transaction cost analysis. We consider a liquidity trader who wants to transact in both the opening auction and the subsequent continuous trading auction of the NASDAQ stock exchange. While theoretically reasonable to expect significant reduction in execution cost compared to trading in continuous auction only, the uncertainty from the estimation of market impact factors may affect the efficiency of the optimal strategy. Consequently, the trader may want to hedge this variance if it is too large compared to the benefits of trading in both auctions. The trader's job is therefore to perform sensitivity analysis of his portfolio against different underlying factors. Specifically, the transaction cost analysis will need to answer the following questions:
 
-\subsection{Opening auction and continuous auction of the NASDAQ exchange}
+\begin{itemize}
+  \item What is the transaction cost of the portfolio for execution during the continuous auction only?
+  \item How large the difference of the transaction cost when transact in both the call auction and the continuous auction compared to the continuous auction only?
+  \item How accurate the estimation of the cost factors? Would it possible to hedge if the estimates have high variance?
+\end{itemize}
 
-Opening auction is NASDAQ is called \textbf{Opening Cross}. While similar to the general call auction described in our model, there are certain subtle difference between our model and the NASDAQ's Opening Cross:
+The section starts with descriptive statistics of the stocks in the sample portfolio, along with trading mechanism of the NASDAQ exchange. We then proceed to present the estimation method from public data, along with corresponding estimates and their variances. We perform sensitivity analysis with respect to three main cost factors:
+\begin{itemize}
+  \item Cost of trading in the opening auction.
+  \item Cost of trading in the continuous auction.
+  \item The recovery rate of market impact of auction trading in continuous phase.
+\end{itemize}
+
+We conclude the section with the summary of the sensitivity analysis, and the optimal course of action for the liquidity trader given his risk appetite.
+
+\subsection{Data and market mechanism}
+
+We use equity data from NASDAQ exchange in this study, which has operating mechanism resembling our model. Opening auction in NASDAQ is called \textbf{Opening Cross}. While similar to the general call auction described in our model, there are certain subtle difference between our model and the NASDAQ's Opening Cross:
 \begin{itemize}
   \item Before the opening bell at 9:30 EST, NASDAQ allows investors to submit orders to two different books: a continuous book and an opening cross book. Orders submitted to the continuous book will be matched immediately and disseminate in the market data feed. Orders submitted to the opening cross book will be withheld to be matched later and are not visible in the market data feed.
   \item At 9:30 EST, the opening cross book and the continuous book will be merged together to form a single book, and a Opening Cross price will be calculated based on the following three rules, similar to our Walrasian matching rule:
@@ -481,34 +499,34 @@ Opening auction is NASDAQ is called \textbf{Opening Cross}. While similar to the
         Matched orders and total matching quantity from the Opening Cross will then be disseminated in the market data feed. Market is considered to be in the continuous trading phase at this point of time.
 \end{itemize}
 
-While the presence of the continuous book during the call auction period deviates from our assumption, it makes little difference in practice due to limited volume transacted during this period. On the other hand, the hidden nature of the Opening Cross orders mean that we cannot directly derive the cost of aggressing the book during the call auction. Fortunately, based on the arguments in subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we can infer the cost of trading during the call auction from the spread and matching volume immediate upon market opening.
+While the presence of the continuous book during the call auction period deviates from our assumption, it makes little difference in practice due to limited volume transacted during this period. On the other hand, the hidden nature of the Opening Cross orders mean that we cannot directly derive the cost of aggressing the book during the call auction. However, based on the arguments in subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we can infer the cost of trading during the call auction from the spread and matching volume immediate upon market opening.
 
 The continuous auction in the NASDAQ exchange, on the other hand, is similar to our model.
 
-\subsection{Data description}
-
-Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock. Given the dataset of 3500 NASDAQ-listed stocks, we pick 40 random stocks with the following constraints:
+Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock. Given the dataset of 3500 NASDAQ-listed stocks, we pick $\numberOfStocks$ random stocks with the following constraints:
 \begin{itemize}
   \item Since we do not account for the value of the queue priority in our market maker's modelling, we avoid selecting stocks with tick size higher than 10 basis points in our sample.
   \item We avoid low liquidity stock by selecting ones higher than 10M daily traded notional, which is roughly the first quartile of our sample.
 \end{itemize}
 
-Given those constraints, we have the stock list in the Appendix, along with their sectors and fundamental statistics. Our analysis use 1 month of data, from 01/10/2019 to 31/10/2019. Since the intraday volumes usually follow a U-shaped pattern, we use the data from market opens at 9:30 EST to late noon at 12:00 PM in our analysis.
+Given those constraints, we use 1 week of data, from 01/10/2019 to 07/10/2019, in our empirical analysis. Since we only account for the market impact of the opening auction in our analysis, we use the data from 9:30 AM to 12:30 AM in our derivation. Due to the limited number of observations per stock, with only one opening auction a day, we group stocks by their relative tick sizes and trading volume to improve the accuracy of the estimations. As shown in subsequent analysis, those metrics capture the variance in our cost factors. The descriptive statistics of the data is in Table (\ref{tbl:stock_desc}). From the statistics, we can see that the sample represents a reasonable range of stocks in terms of traded volume and tick size.
 
-\subsection{Methodology}
+\input{tables/stockDescTable}
 
+\subsection{Estimation method}
 In order to estimate the cost of trading, we need to estimate three factors:
+
 \begin{itemize}
   \item The temporary book aggressing cost factor $\alpha$ before market opening in Equation (\ref{eqn:mm_eval_eqb})
   \item The temporary book aggressing cost factor $\beta$ during the continuous phase in Equation (\ref{eqn:mm_eval_cont})
   \item The spread recovery factor $\rho$ post opening auction in Equation (\ref{eqn:recovery_term_eqb})
 \end{itemize}
 
-We will describe our estimation methodology for each factors in the following.
+In the following, we describe how those factors can be estimated from market data.
 
-\subsubsection{Estimation of cost factor $\alpha$}
+\subsubsection{Estimation of opening auction's cost factor $\alpha$}
 
-Based on Equation (\ref{eqn:expected_spread}), we can estimate the coefficient $b_e$ as
+As mentioned, NASDAQ does not publish order imbalance before market opening, but we can derive the cost factor $\alpha$ from the matching quantity and the opening bid-ask spread. Recall from Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}) that the market maker will be incentivized to provide the offseting liqudity $V_e$ for market to open, with price sensitivity coefficient $b_e$. The market maker will then need to make a spread of $\zeta_e$ to realize his expected profit from $V_e$. Assuming his price sensitivity coefficient $b_e$ does not change after market opening, we can estimate $b_e$ based on Equation (\ref{eqn:expected_spread}) as
 \[
   \hat{b_e} = \frac{\bar{V_e}}{\bar{\zeta_e}}
 \]
@@ -520,10 +538,32 @@ where
 
 The estimation of cost factor $\alpha$ will then be
 \[
-  \hat{\alpha} = \frac{1}{\hat{b_e}}
+  \hat{\alpha} = \frac{1}{\hat{b_e}}  = \frac{\bar{\zeta_e}}{\bar{V_e}}
 \]
 
-\subsubsection{Estimation of cost factor $\beta$}
+It should be noted that both $V_e$ and $\zeta_e$ are random variables, hence makes the measurement of the cost factor $\alpha$ follow a ratio distribution. Ratio distribution often is heavy-tailed and has high variance. For example, assuming that $V_e$ and $\zeta_e$ follow independent normal distribution with zero means, then $\alpha$ will follows Cauchy distribution, with both its expected value and variance undefined (\cite{Geary1930}). In reality, we expect $V_e$ and $\zeta_e$ to be both correlated and noncentral, making the exact distribution of $\alpha$ even more complicated. To mediate this, we use the log transformation of the ratio in our subsequent analysis. The rationale, according to (\cite{Katz1978}), is as follows:
+
+Let assume $V_e$ and $\zeta_e$ to be correlated noncentral normal random variables. The cost ratio $\alpha$ then can be expressed as:
+\[ \alpha \sim \frac{\mu_{\zeta_e} + \mathbb{N}(0, \sigma_{\zeta_e}^2 )}{\mu_{V_e} + \mathbb{N}(0, \sigma_{V_e}^2 )}
+  = \frac{\mu_{\zeta_e} + \zeta_e}{\mu_{V_e} + V_e}
+  = \frac{\mu_{\zeta_e}}{\mu_{V_e}}\frac{1+ \frac{\zeta_e}{\mu_{\zeta_e}}}{1+ \frac{V_e}{\mu_{V_e}}}
+\]
+
+Take logs to get
+\[\log(\alpha) = \log \left(\frac{\mu_{\zeta_e}}{\mu_{V_e}} \right)
+  + \log \left( 1+ \frac{\zeta_e}{\mu_{\zeta_e}} \right)
+  - \log \left( 1+ \frac{V_e}{\mu_{V_e}} \right)
+\]
+Since $\log(1+\delta) = \delta - \frac{\delta^2}{2} + \frac{\delta^3}{3} + \dots $
+then asymptotically
+\[ \log(\alpha) \approx \log \left(\frac{\mu_{\zeta_e}}{\mu_{V_e}} \right)+ \frac{\zeta_e}{\mu_{\zeta_e}}  -
+  \frac{V_e}{\mu_{V_e}}
+  \sim \log \left(\frac{\mu_{\zeta_e}}{\mu_{V_e}} \right) + \mathbb{N} \left( 0, \frac{\sigma_{\zeta_e}^2}{\mu_{\zeta_e}^2} + \frac{\sigma_{V_e}^2}{\mu_{V_e}^2} \right)
+\]
+
+In other words, the log transformation allows us to consider the cost factor $\alpha$ approximately a Gaussian distributed random variable.
+
+\subsubsection{Estimation of continuous auction's cost factor $\beta$}
 
 Equation (\ref{eqn:markup_px_cont}) allows us to estimate cost factor $\beta$ directly from the liquidity posted in the book, with a slight adjustment. Since Equation (\ref{eqn:markup_px_cont}) is in terms of average price, we need to convert the price of the book to average price from the best bid-offer level, as illustrated in Table (\ref{tbl:bookAvgPxConversion}). Given the cumulative sum quantity as the independent variable $X$ and the average price as dependent variable $Y$, we have the $\beta$ estimate in a linear regression equation
 
@@ -556,7 +596,7 @@ where $N$ is the number of days in our sample, and we measure the spread $\zeta_
   \label{tbl:bookAvgPxConversion}
 \end{table}
 
-\subsubsection{Estimation of spread recovery factor $\rho$}
+\subsubsection{Estimation of spread recovery rate $\rho$}
 
 Given the transition period, we measure the average spread on a 1-minute interval:
 \[
@@ -568,36 +608,91 @@ where $j$ is the index of 1-minute interval, and $N$ is number of days in our da
 \]
 where the independent variable $t$ is number of seconds since market opening, and the dependent variable $y$ represented the average spread $\bar{\zeta_j}$.
 
-\subsection{Summary}
+\subsubsection{Data binning by volatility group}
 
-The histogram of the cost saving percentage by using our optimal trading strategy over a TWAP is in Figure (\ref{fig:hist_cost_saving}), and the corresponding 5-number summary is in Table (\ref{table:CostSavingSummary}). From the significant cost saving presents across the board, we can conclude that our optimal trading strategy yields significant cost saving compared to a TWAP in continuous phase only. Since our sample represents a wide range of stocks in terms of tick size, market cap and sectors, as can be seen in Table \ref{table:StockBasics} and Figure (\ref{}), it is reasonable to assume a similar cost saving effects are present in other stocks in the market.
+While the estimation method is straightforward, there is one observation of each factor per stock per day, and our data span only 1 week of trading. Consequently, the estimates for each stock may not be representative of the cost factors' expected values. To improve the accuracy of the estimates, we group the data by each stock's daily volatility, normalized as percentage of its average price. The correlation between volatility and $\alpha$, $\beta$ and $\rho$ are $28\%$, $48\%$ and $24\%$, respectively. From the correlation, we hypothesize that the stocks' parameters within the same volatility bin will have similar distribution. Formally, let $F_\alpha$, $F_\beta$ and $F_\rho$ be the log distribution of $\alpha$, $\beta$ and $\rho$, respectively:
+\[
+  log \alpha \sim F_\alpha(\mu_\alpha,\sigma_\alpha|v)
+\]
+\[
+  log \beta \sim F_\beta(\mu_\beta,\sigma_\beta|v)
+\]
+\[
+  log \rho \sim F_\rho(\mu_\rho,\sigma_\rho|v)
+\]
+where $(\mu_\alpha,\sigma_\alpha)$, $(\mu_\beta,\sigma_\beta)$ and $(\mu_\rho,\sigma_\rho)$ are the means and standard deviations of the log of cost factors $\alpha$, $\beta$ and $\rho$ per volatility group $v$, respectively. The ratios are expected to be all positive and skewed towards zero, so we use log-transformation to make the sample more symmetric. Let $log \alpha*$, $log \beta*$ and $log \rho*$ be the sample mean per stock:
+\[
+  log \alpha* = \sum_{i=1}^m \alpha_i/m
+\]
+\[
+  log \beta* = \sum_{i=1}^m \beta_i/m
+\]
+\[
+  log \rho* = \sum_{i=1}^m \rho_i/m
+\]
+where $m$ is number of observations per stock. Based on the Central Limit Theorem, we have $log \alpha*$, $log \beta*$ and $log \rho*$ converge to normal distribution with means approximating expected values of cost factors per volatility group. We test the convergence using the Jarque–Bera test (\cite{JarqueBera1980}), reported along with the log estimates in the subsequent result summary.
 
-The cost factors, along with their standard deviation, is in Table (\ref{table:StockFactors}) in the Appendix. The cost breakdown and comparison to an equivalent TWAP strategy is in Table (\ref{table:StockCost}) in the Appendix.
+\subsection{Transaction cost summary}
 
-\begin{figure}[h]
-  \includegraphics[width=\textwidth]{CostSavingChart}
-  \caption{The histogram of the cost saving by using optimal trading stategy over a TWAP in percentage points. The saving percentage is significant across the stocks in our sample.}
-  \label{fig:hist_cost_saving}
-\end{figure}
+Based on the cost factor estimates per volatility group, table (\ref{tbl:param_estimates}) presents the estimates of the model for the group of stock based on daily volatility in our sample. In general, the estimates of cost factors per volatility group follows normal distribution with $5\%$ significance level. Therefore, we can assume that the estimates are representative of the expected cost factors per group.
 
-\begin{figure}[h]
-  \includegraphics[width=\textwidth]{StockBasicsHist}
-  \caption{Histogram of basic information of the stocks in our sample. As can be seen from those metrics, our stocks span a wide range in terms on tick size, market capitalization, daily traded notional and daily volatility.}
-  \label{fig:stock_basics}
-\end{figure}
+The estimates in each group are positive and within a reasonable range to each other. This suggests that the estimation methods are robust to the choice of instruments. We also observe that:
+\begin{itemize}
+  \item The estimates of $log \alpha$ and $log \beta$ are in similar range. This suggests that our estimation of the auction cost factor from spread and auction matching quantity concurs with the cost implied in the liquidity posted in the continous trading book. In other words, we expect market makers to have consistent pricing across sessions, so $\alpha$ and $\beta$ should have similar values across volatility groups.
+  \item The estimates of $log \rho$ are similar across volatility groups. This suggests that the recovery rate of the market impact during the auction matching is consistent across stocks and volatility bands.
+\end{itemize}
 
-\input{tables/stockCostSavingSummary}
+\input{tables/paramsTable}
+
+We then proceed to calculate the execution cost of each group using the following cost measures:
+\begin{itemize}
+  \item Square-root cost ($C_1$): the standard method of market impact is the square-root formula
+        \[
+          C_1 = c \sigma \sqrt{\frac{n}{v}}
+        \]
+        where $C_1$ is the price change from executing a trade for $n$ shares, with market volatility $\sigma$, average daily volume $v$ and some constant $c$ (\cite{Toth2011}). We use this as a benchmark to our cost formula to ensure that our estimates are reasonable. Constant $c$ is set to one in our estimates. Note that the square-root cost only applies to cost of trading during continuous auction.
+  \item TWAP cost ($C_2$): the total cost of executing a TWAP strategy during continuous trading session. The formula is:
+        \[
+          C_2 = \frac{Q_0 (2 Q_0 T \beta + \frac{1-e^{-T \rho} T V_e \alpha}{\rho})}{2 T^2}
+        \]
+  \item Optimal cost ($C_3$): the total cost of executing the optimal strategy in both the opening auction and the continous session. The formula is:
+        \[
+          C_3 = B_0^3 \alpha + A^2 T \beta + \frac{A (1-e^{-T \rho}) V_e \alpha}{2 \rho} - \frac{B_0 e^{-T \rho} (B_0 + 2 V_e) \alpha^2 \sinh(T \rho)}{16 \beta \rho}
+        \]
+        where
+        \[
+          A =   \frac{4 (Q_0 - B_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {4 T}
+        \]
+  \item Auction optimal cost ($C_4$): the cost of executing the optimal strategy in the opening auction. The formula is:
+        \[
+          C_4 = B_0^2 \alpha
+        \]
+  \item Continous optimal cost ($C_5$): the cost of executing the optimal strategy in the continous session. The formula is:
+        \[
+          C_5 = C_3 - C4
+        \]
+  \item Optimal cost ratio ($C_6$): the ratio of the difference between cost of TWAP and the optimal strategy. The formula is:
+        \[
+          C_6 = \frac{C_2 - C3}{C_2}
+        \]
+\end{itemize}
+
+The results are reported in Table (\ref{tbl:cost_report}). We can observe that:
+\begin{itemize}
+  \item The square-root law cost ($C_1$), the TWAP strategy's cost ($C_2$) and the optimal strategy's cost are on similar scale. This suggests our cost measures concurs with the square-root law of market impact. We can see that $C_2$ increases proportionally with the square-root cost, as the volatility increases. This suggests the more volatile a stock is, the higher its cost of aggressing the book.
+  \item The difference between the square-root law cost ($C_1$) and the TWAP strategy's cost ($C_2$) widens significantly as volatility increases, even with constant $c$ in the square-root law adjusted. This implies that there is an additional component in the square-root law cost that is not captured in our formula. We hypothesizes that this is the permanent impact that moves the fundamental price up as we buy and down as we sell (See, for example, \cite{Kyle1985}). However, as shown in (\cite{AlmgrenChriss2000}), this component is not optimizable.
+  \item The improvement is significant across the volatility groups. This makes sense as the opening auction's pricing is similar to the continuous auction's pricing. Therefore, the opening auction provides an alternative venue to take liqudity from. By balancing his trades across two auctions, the liqudity trader can get cheaper pricing for his trades. 
+  \item The optimal cost does not increase as much as the TWAP cost when volatility increases. Examining the auction proportion of the optimal cost, we can see the reason: the optimal strategy allocates the rising cost to the auction trade. The cost of trading in auction is consistently lower than continuous trading phase in (\ref{tbl:param_estimates}). Therefore, by allocate more shares to be execute in the auction, the optimal strateyg lowers the rate of increase in cost compared to the TWAP strategy. The continuous portion of the optimal cost stays almost constant across volatility groups.
+\end{itemize}
+
+From those observations, we can see that the optimal strategy does not only lower the cost of trading compared to the TWAP strategy, but also help stablize cost among different volatility regimes. Therefore, the liqudity trader can achieve better control of his cost, as the optimal strategy is balanced against volatility.
+
+\input{tables/costTable}
 
 \section{Conclusion}\label{secConclusion}
 We shows that when the cost of trading in the call auction is comparable to the continuous trading phase, our strategy yields significant cost savings. Subsequent research on different forms of market impact under both auctions, and extending to multi-phase auction market, can be conducted in the future to yield more interesting findings.
 
 \section{Appendix}
-
-\input{tables/stockBasicsTable.tex}
-
-\input{tables/stockFactorsTable.tex}
-
-\input{tables/stockCostTable.tex}
 
 \begin{proof}[Derivation of the optimal trading strategy]\label{proof:optimal-strategy}
   The cost of trading in both auction given the notations in the paper is:
