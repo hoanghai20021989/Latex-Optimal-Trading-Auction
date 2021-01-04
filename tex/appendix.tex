@@ -1,0 +1,55 @@
+
+\begin{proof}[Derivation of the optimal trading strategy in a mixed auction market]\label{proof:optimal-strategy-mixed-auction}
+    The cost of trading in both auction given the notations in the paper is:
+    \[
+      C = \alpha B_0^2  + \alpha \int_0^T \frac{B_0 + V_e}{2} e^{-\rho s} E_s ds + \beta \int_0^T E_s^2 ds
+    \]
+  
+    We need to find a tuple of $(B_0, E_t, X_t)$ as a stationary point (function) of the functional. First we assume $B_0$ is static, and solve the cost of trading during continuous phase:
+    \[
+      C_c = \int_0^T \frac{B_0 + V_e}{2} \alpha e^{-\rho s} E_s ds + \int_0^T  \beta E_s^2 ds
+    \]
+    which has the following Euler-Lagrange equation
+    \[
+      \frac{\alpha}{4 \beta} B_0  e^{-\rho s} +E_s = A
+    \]
+    \[
+      \Leftrightarrow \hat{E_s} = A - \frac{\alpha}{4 \beta} B_0 e^{-\rho s}
+    \]
+    \[
+      \Leftrightarrow \hat{X_t} = At + B - \frac{\alpha}{4 \beta \rho}B_ 0 (1 - e^{-\rho t})
+    \]
+    Using the boundary conditions:
+    \[
+      \hat{X_0} = 0
+    \]
+    \[
+      \hat{X_T} = Q_0 - B_0
+    \]
+    we have
+    \[
+      B = 0
+    \]
+    \[
+      A = \frac{4 (Q_0 - B_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {4 T}
+    \]
+    Taking the first derivative of the cost function $C$ w.r.t. $B_0$ and solve for $B_0$, we have
+    \[
+      B_0 = \frac{Q_0 F_{11} + V_e F_{12}}{F_2}
+    \]
+    where
+    \[
+      F_{11} = 8 e^{T \rho} \beta \rho [\alpha - e^{T \rho} (\alpha - 4 \beta \rho)]
+    \]
+    \[
+      F_{12} = (e^{T \rho}-1) \alpha [\alpha (2+T \rho) + e^{T \rho} (8 \beta \rho + \alpha (T \rho - 2 ))]
+    \]
+    \[
+      \begin{split}
+        F_2 = \alpha^2 (2 + T \rho) - 4 e^{T \rho} \alpha (\alpha + 2 \beta \rho)
+        + e^{2 T \rho} [8 \beta \alpha \rho + 8 \beta (T \alpha + \beta) \rho^2 + \alpha^2 (2 - T \rho)]
+      \end{split}
+    \]
+  
+  \end{proof}
+  
