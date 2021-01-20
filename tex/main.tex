@@ -7,7 +7,7 @@ In modern financial markets, double auction is a standard process of buying and 
   \item \textbf{Continuous auction} Orders are matched continuously based on time and price priority. Participants in the auction can choose to either queue their orders to wait for an opposing trade, or cross the book to match against other's orders.
 \end{itemize}
 
-We seek to reduce market impact and cost of trading by utilizing both auctions in our liquidation algorithm. The aim is to significantly reduce the cost of trading by exploiting liquidity from both, by answering the following questions:
+We seek to reduce market impact and cost of trading by utilizing both auctions in our liquidation algorithm. The aim is to significantly reduce the cost of trading by exploiting liquidity from both, which can be achieved from answering the following questions:
 
 \begin{itemize}
   \item What are the relevant factors that affect market impact during both auctions?
@@ -15,9 +15,9 @@ We seek to reduce market impact and cost of trading by utilizing both auctions i
   \item How can we optimize for a liquidation trading strategy, taken into account those factors?
 \end{itemize}
 
-In general, the challenge lies in the different mechanisms of the auctions, and the modelling of market impact during both thereof. By modelling the interaction between different participants in the market, namely between market makers and liquidity takers, we derive the mechanism of market impact under both auctions. From the mechanism, we optimize for a liquidation problem that results in on average 50\% reduction in transaction cost against the classical TWAP solution.
+In general, the challenge lies in the different mechanisms of the auctions, and the modelling of market impact during both thereof. By modelling the interaction between different participants in the market, namely between market makers and liquidity takers, we derive the mechanism of market impact under both auctions. From the mechanism, we optimize for a liquidation problem that results in on average 50\% reduction in transaction cost against the classical TWAP solution during continuous trading phase only.
 
-It is not a coincidence that by incorporating call auction into the optimal liquidation problem, we can reduce cost significantly. Historically, the adoption of the call auctions has resulted in substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. (\cite{Madhavan2015}) found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of the average trade volume. (\cite{Bruno1999}) found similar phenomenon on the Paris Bourse, in which the opening auction accounts for about 10 percent of average daily trade value. (\cite{Carole2006}) has a similar conclusion regarding the Australian Stock Exchange (ASX).
+It is not a coincidence that by incorporating call auction into the optimal liquidation problem, we can reduce cost significantly. Historically, the adoption of the call auctions has resulted in a substantial shift of daily trading activity, with the call auctions responsible for a significant proportion of the average daily trading volumes. (\cite{Madhavan2015}) found that the call auction in New York Stock Exchange (NYSE) accounts for roughly 10 percent of the average trade volume. (\cite{Bruno1999}) found similar phenomenon on the Paris Bourse, in which the opening auction accounts for about 10 percent of average daily trade value. (\cite{Carole2006}) has a similar conclusion regarding the Australian Stock Exchange (ASX).
 
 A call auction can lower execution costs for participants and improve price discovery process, as suggested in (\cite{Pagano2003}). The reduction in trading costs, such as market impact and adverse selection costs, is achieved through several channels, including (\cite{Carole2006}):
 
@@ -156,7 +156,7 @@ The matching price is the fair price of the stock with a mark-up in proportion t
 \end{figure}
 
 \subsection{Continuous auction mechanism and agents' behaviours}\label{subsec:AnalyticalFrameworkContinuousAuction}
-During the continuous trading session, orders can be posted into the market at anytime during the session and will be matched immediately. If a buy order has a price that is higher than the current lowest offer in the book, it will be matched immediately, and vice versa for sell orders. Otherwise, they will be added into the book.
+During the continuous trading session, orders can be posted into the market at anytime during the session to be matched. If a buy order has a price that is higher than the current lowest offer in the book, it will be matched immediately, and vice versa for a sell order. Otherwise, it will be added into the book.
 
 Similar to the call auction, we model the continuous auction as a multi-round two-stage game. At the beginning of each round, we pick randomly a liquidity trader to act as the counterparty of the market maker. In the first stage of the round, the market maker place limit orders in the book according to his risk tolerance and private information. In the second stage, the liquidity trader will place a market order based on his exogenous demand. This setup is slightly different from the call auction in which:
 \begin{itemize}
@@ -203,7 +203,7 @@ Comparing Equation (\ref{markup_px_eqb}) and Equation (\ref{eqn:markup_px_cont})
 
 \subsection{Price discovery at market opening}\label{subsec:AnalyticalFrameworkTransitionPeriod}
 
-There are empirical evidence that the transition period immediate after market opening is crucial in determining the effectiveness of the opening call auction (\cite{Pagano2013}). In this subsection, we analyze how the market maker, and consequently the spread, may behave during this period, and the subsequent effects on the liquidity trader. Recalling from Equation (\ref{markup_px_eqb}), the opening price is marked up proportional to the buy-sell imbalance at the end of call auction. Let
+There is empirical evidence that the transition period immediate after market opening is crucial in determining the effectiveness of the opening call auction (\cite{Pagano2013}). In this subsection, we analyze how the market maker, and consequently the spread, may behave during this period, and the subsequent effects on the liquidity trader. Recalling from Equation (\ref{markup_px_eqb}), the opening price is marked up proportional to the buy-sell imbalance at the end of call auction. Let
 \[
   V_e = \sum_{i=0}^K x_i
 \]
@@ -219,7 +219,7 @@ To capitalize this gain after market opening, the market maker will need to make
 \[
   q(p) = a_e - b_e p
 \]
-where $a_e = \frac{p_0}{\lambda \sigma_e^2} - V_e$ and $b_e=\frac{1}{\lambda \sigma_e^2}$, based on his signal when pricing the call auction. As $V_e$ is positive, this means the market maker is willing to sell at $p_e$. On the other hand, it is reasonable to assume that he will want to liquidate his position acquired from the opening call auction at $p_0$, his fair price of the asset at the end of the call auction. Therefore, the market maker will make a spread of $\frac{V_e}{b_e}$ immediately after call auction. The quotes of the market maker are illustrated in Figure (\ref{fig:mm_pricing_transition}).
+where $a_e = \frac{p_0}{\lambda \sigma_e^2} - V_e$ and $b_e=\frac{1}{\lambda \sigma_e^2}$, based on his signal when pricing the call auction. As $V_e$ is positive, this implies that the market maker is willing to sell at $p_e$. On the other hand, it is reasonable to assume that he will want to liquidate his position acquired from the opening call auction at $p_0$, his fair price of the asset at the end of the call auction. Therefore, the market maker will make a spread of $\frac{V_e}{b_e}$ immediately after call auction. The quotes of the market maker are illustrated in Figure (\ref{fig:mm_pricing_transition}).
 
 \begin{figure}[h]
   \includegraphics[width=\textwidth]{\OptimalAuctionPath/images/MMPricingTransition}
@@ -238,7 +238,7 @@ where
   \item $\zeta_e$ is the spread at the open of continuous trading session.
 \end{itemize}
 
-From the similarity of the pricing function during the call auction in Equation (\ref{markup_px_eqb}) and the continuous auction in Equation (\ref{eqn:markup_px_cont}), we can see that, ceteris paribus, it is advantageous to trade in both sessions to consume liquidity from both to lower his market impact. This will become clearer once we derive the optimal trading strategy in the next section. Moreover, as the call auction compresses the liquidity over a long period in one single price, there is usually a larger than normal amount of shares matched that the market marker will need to unwind during the transition period. This will affect the pricing for the liquidity trader during this period, in addition to the normal pricing in the continuous session. Specifically, the liquidity trader will potentially face one of the following two scenarios during the call auction:
+From the similarity of the pricing function during the call auction in Equation (\ref{markup_px_eqb}) and the continuous auction in Equation (\ref{eqn:markup_px_cont}), we can see that, ceteris paribus, it is advantageous to trade in both sessions to consume liquidity from both to lower his market impact. This will be clearer once we derive the optimal trading strategy in the next section. Moreover, as the call auction compresses the liquidity over a long period of time in one single price, there is usually a much larger quantity traded than an average market order during continuous auction. Consequently, the market marker will need to unwind the position acquired from the call auction over a transition period immediately after the matching. This will affect the pricing for the liquidity trader during this period, in addition to the normal pricing in the continuous session. Specifically, the liquidity trader will potentially face one of the following two scenarios during the call auction:
 
 \begin{itemize}
   \item {\textbf{Scenario 1: The liquidity trader trades in the same direction as the market imbalance}
@@ -256,7 +256,7 @@ From the similarity of the pricing function during the call auction in Equation 
         }
   \item {
         \textbf{Scenario 2: The liquidity trader trades against the market imbalance}
-        In this case, the liquidity trader will sell to the market, similar to the market maker. Therefore, he is providing liquidity to the market, reducing the bid-ask spread immediately after market opening. In other words, the opening price bid improves from $p_e$ to
+        In this case, the liquidity trader will sell to the market, similar to the market maker. Therefore, he is providing liquidity to the market, reducing the bid-ask spread immediately after market opening. Consequently, the opening price bid will improve from $p_e$ to
         \[
           p_{e-} = p_0 + \frac{V_e - B_0}{b_e}
         \]
@@ -268,10 +268,10 @@ From the similarity of the pricing function during the call auction in Equation 
         \end{figure}
         }
 \end{itemize}
-As the market maker is buying at the fair price of $p_0$ and selling at a discounted price $p_e$, it is reasonable that he will get filled more on the bid side than the ask side.
+As the market maker is buying at the fair price of $p_0$ and selling at a discounted price $p_e$, it is reasonable to assume that he will get filled more on the bid side than the ask side. This allows the market maker to reduce his inventory over time, and therefore tighten the bid-ask spread. Depending on which scenario the liquidity trader fallse into, the market maker's behaviour may affect his cost of liquidation. Specifically, we have:
 
 \begin{itemize}
-  \item Under Scenario 1, trading in the call auction results in an ongoing penalty cost to the liquidity trader that will decay over time, as he will need to lift the offer to sell. Let the speed of liquidation of the market maker be $\rho$ and $V_t$ be the remaining position of the market maker acquired from the call auction in Scenario 1. Consequently, we have
+  \item Under Scenario 1, trading in the call auction results in an ongoing penalty cost to the liquidity trader that will decay over time, as he will need to lift the offer to buy. Let the speed of liquidation of the market maker be $\rho$ and $V_t$ be the remaining position of the market maker acquired from the call auction in Scenario 1. Consequently, we have
         \[
           dV_t = -\rho V_t
         \]
@@ -289,16 +289,16 @@ As the market maker is buying at the fair price of $p_0$ and selling at a discou
   \item Under Scenario 2, trading in the call auction has no "spillover" effect on the liquidity trader, as the liquidity trader will keep hitting the bid to sell while the market maker will try to improve the offer.
 \end{itemize}
 
-As this "spillover" cost only happens half of the time, under Scenario 1, the markup cost to the liquidity trader during this transition period is:
+This "spillover" cost only incurs half of the time under Scenario 1, while under Scenario 2 there is no additional cost for the liquidity trader during the continuous phase. Therefore, the expected markup cost to the liquidity trader during this transition period is:
 
 \begin{equation}\label{resilence_term}
   \zeta_t = \frac{e^{-\rho t}}{2 b_e}  (V_e + B_0)
 \end{equation}
-which we use in the next section to derive the optimal liquidation strategy for the liqudity trader.
+which we use in the next section to derive the optimal liquidation strategy for the liquidity trader.
 
 \subsection{Optimal liquidation strategy in a mixed auction market}
 
-Based on the behaviors of market makers in the previous subsections, we can derive the market impact of trading for the liquidity trader in each of the session. Suppose the fundamental price process $S_t$ at time $t$ is given by
+Based on the behaviors of market makers in the previous subsections, we can derive the market impact of trading for the liquidity trader across the sessions. Let the fundamental price process $S_t$ at time $t$ be
 \[
   S_t = S_0 + \int_0^t \sigma dZ_s
 \]
@@ -308,7 +308,7 @@ that is, $S_t$ follows a classical arithmetic random walk without any drift. The
   P_t = S_t + D_t
 \]
 
-From Equation (\ref{markup_px_eqb}) and Equation (\ref{eqn:markup_px_cont}), it is reasonable to assume that $D_t$ will include a linear cost component proportional to the trading sizes under each session:
+From Equation (\ref{markup_px_eqb}) and Equation (\ref{eqn:markup_px_cont}), we can add into $D_t$ a linear cost component proportional to the trading sizes under each session:
 \begin{equation}\label{short_term_deviation}
   D_t = \alpha B_0 + E_t \beta
 \end{equation}
@@ -325,23 +325,24 @@ Equation (\ref{short_term_deviation}) is similar to what has been described as t
 
 The short term deviation term $D_t$ is then
 \[
-  D_t = \underbrace{\alpha B_0 }_\text{Cost of aggressing the book at the end of the call auction} +
-  \underbrace{\frac{\alpha (B_0 + \bar{V_e}) e^{-\rho t}}{2}}_\text{Spillover cost from call auction} +  \underbrace{\beta E_t}_\text{Cost of aggressing the book during continuous auction}
+  D_t = \underbrace{\alpha B_0 }_\text{Cost of the call auction} +
+  \underbrace{\frac{\alpha (B_0 + \bar{V_e}) e^{-\rho t}}{2}}_\text{Spillover cost} +  \underbrace{\beta E_t}_\text{Cost of the continuous auction}
 \]
-and the market impact cost of trading is
+and the execution cost is
 \begin{equation}\label{eqn:cost_equation_all}
   C_t = \alpha B_0^2 + \int_0^t \frac{\alpha (B_0 + \bar{V_e}) e^{-\rho t}}{2} E_s ds + \int_0^t \beta E_s^2 ds
 \end{equation}
-which we can use to derive an optimal strategy for the liquidity trader. Let assume the liquidity trader wants to unwind a large position, and he has the option to exercise his trades in both the call auction and the continuous auction. We have the following notations regarding his trading strategy:
+
+Based on the execution cost equation, we can derive an optimal strategy for the liquidity trader. Let assume the liquidity trader wants to unwind a large position, and he has the option to execute his trades in both the call auction and the continuous auction. We have the following notations regarding his trading strategy:
 
 \begin{itemize}
   \item $Q_t$ is the total number of shares of his portfolio at time t.
   \item $E_t$ is the continuous liquidation strategy during the continuous trading auction.
-  \item $X_t=\int_0^t E_s ds$ is remaining shares at time $t$.
+  \item $X_t=\int_0^t E_s ds$ is the number of total executed shares at time $t$.
   \item $B_0=Q_0 - \int_0^T E_s ds$ is the size of the block trade executed at the end of the opening call auction.
 \end{itemize}
 
-Based on the Proof (\ref{proof:optimal-strategy}) in the Appendix, we have the optimal size of block trade in the call auction is:
+Based on the Proof (\ref{proof:optimal-strategy-mixed-auction}) in the Appendix, we have the optimal size of block trade in the call auction as:
 \[
   B_0 = \frac{Q_0 F_{11} + V_e F_{12}}{F_2}
 \]
@@ -369,7 +370,7 @@ where
 \[
   A =   \frac{4 (Q_0 - B_0) + \frac{(1 - e^{-T \rho})}{\beta \rho} B_0 \alpha} {4 T}
 \]
-The optimal trading strategy during auction phase is a combination of a TWAP with an exponentially decayed component to account for the spillover effect. A sample optimal allocation between the auction's block trade and the continuous trading strategy's size is in Figure (\ref{fig:optimal_sizes}). The corresponding optimal liquidation rate curve of the strategy is plotted in Figure (\ref{fig:optimal_curve_strategy}).
+The optimal trading strategy during auction phase is a modification of a TWAP strategy with an exponentially decayed component to account for the spillover effect. This is expected as a TWAP is proven to be optimal for a strategy with the cost of aggressing the orderbook only in (\cite{Ho1981}). A sample optimal allocation between the auction's block trade and the continuous trading strategy's size is in Figure (\ref{fig:optimal_sizes}). The corresponding optimal liquidation rate curve of the strategy is plotted in Figure (\ref{fig:optimal_curve_strategy}).
 
 \input{\OptimalAuctionPath/tables/sampleTradeSize.tex}
 
@@ -384,15 +385,15 @@ The optimal trading strategy during auction phase is a combination of a TWAP wit
 The main findings of this section can be summarized as follows:
 
 \begin{itemize}
-  \item The presence of informed trading from the market maker is required for the call auction to open, as the market maker will provide the necessary liquidity to offset the buy-sell imbalance at the end of the call auction.
+  \item The presence of informed trading from the market maker is required for the transition to continuous trading, as the market maker will provide the necessary liquidity to offset the buy-sell imbalance at the end of the call auction.
   \item The transition period from the call auction will be characterized with a wide initial spread narrowing over time due to inventory management from the market maker.
-  \item Trading in the call auction lower the cost of trading in general, as the call auction provides an additional venue for liquidity consumption.
+  \item Trading in the call auction lower the total execution cost compared to trading in continuous auction only, as the call auction provides an additional venue for liquidity consumption.
   \item There is an optimal liquidation strategy to execute trade during both the call auction and the continuous auction. The mixing ratio of the strategy is determined by the efficiency of each auction, in terms of immediate cost of aggressing the book and the speed of spread recovery after market opening.
 \end{itemize}
 
 Before moving to empirical analysis, it is imperative to address some stylized facts of our model. We assume that the liquidity traders are price takers who submit market orders to signify his intention to trade regardless of opening price, and the market maker will post limit orders to counter the imbalance. In most modern stock exchanges, all participants can post limit orders in the order book to be "crossed" during the opening match. Limit orders can also be modified or cancelled before the opening match, allowing participants to update their pricing. However, as long as the market maker in our model can place his trade after all the liquidity traders has submitted their orders, the pricing schedule based on the market imbalance still holds.
 
-We also assume that there is only one market maker and only he or she trades with private information. In practice, there can be multiple agents trading with information. However, as long as the private information is derived from public data, that is, no insider trading, we can assume that all informed agent will have the same "signal" regarding the fair price of the stock, and are only different in their risk aversion factor. Therefore, we can assume that all informed agents are trading with same risk aversion factor, which are represented by the market maker in our model.
+We also assume that there is only one market maker and only he or she trades with private information. In practice, there can be multiple agents trading with information. However, as long as the private information is derived from public data, that is, no insider trading, we can assume that all informed agent will have the same "signal" regarding the fair price of the stock, and are only different in their risk aversion factor. Therefore, we can assume that all informed agents are trading with same risk aversion factor, which are represented by the market maker in our model. The principal agent who provides liquidity in the call auction is assumed to be a market maker because, as shown in our model, he will need to make a spread in the continuous auction to capture the expected profit from his signal.
 
 The source of private information is also a vital assumption in our model. We assume that the market maker derives his valuation from public information, which include, but not limited to, the following factors:
 
@@ -409,21 +410,21 @@ Another deviation is the inventory management effects of the market maker. In ou
   \item The auction matching volume is usually much larger than a normal trade during continuous phase, accounted for a significant fraction of the daily trading volume.
 \end{itemize}
 
-Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will be profitable after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the gain from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his gain. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time.
+Last but not least, although it is immaterial to our cost analysis, it is not obvious that the market maker will be profitable after placing his "stabilization" trade to counter the opening auction's imbalance. Even when his initial signal is correct up to the end of the opening auction, new information may come and he has to change his valuation of the stock before realize the signal from the call auction. This is evident in the high volatility immediately after market opening. However, the continuous book is only one of many execution venue for the market maker to realize his signal. For example, the market maker may attempt to "lock-in" his profit by hedging into the index futures immediately. He then can slowly unwind both legs of the hedge over the course of the day, resulting in a tightening spread over time.
 
 With those caveats in mind, we can proceed to the empirical analysis of NASDAQ data to estimate the liquidation cost of trading in both auctions compared to only during the continuous auction.
 
 \section{Application: optimal execution for a portfolio of stocks in mixed auction market}\label{sec:EmpiricalAnalysis}
 
-In this section, we apply our model to the case of transaction cost analysis. We consider a liquidity trader who wants to transact in both the opening auction and the subsequent continuous trading auction of the NASDAQ stock exchange. While theoretically reasonable to expect significant reduction in execution cost compared to trading in continuous auction only, the uncertainty from the estimation of market impact factors may affect the efficiency of the optimal strategy. Consequently, the trader may want to hedge this variance if it is too large compared to the benefits of trading in both auctions. The trader's job is therefore to perform sensitivity analysis of his portfolio against different underlying factors. Specifically, the transaction cost analysis will need to answer the following questions:
+In this section, we apply our model to the case of transaction cost analysis. We consider a liquidity trader who wants to transact in both the opening auction and the subsequent continuous trading auction of the NASDAQ stock exchange. While theoretically reasonable to expect significant reduction in execution cost compared to trading in continuous auction only, the uncertainty from the estimation of market impact factors may affect the efficiency of the optimal strategy. Consequently, the trader may want to assess this uncertainty if it is too large compared to the benefits of trading in both auctions. The trader's job is therefore to perform sensitivity analysis of his portfolio against different underlying factors. Specifically, the transaction cost analysis will need to answer the following questions:
 
 \begin{itemize}
   \item What is the transaction cost of the portfolio for execution during the continuous auction only?
   \item How large the difference of the transaction cost when transact in both the call auction and the continuous auction compared to the continuous auction only?
-  \item How accurate the estimation of the cost factors? Would it possible to hedge if the estimates have high variance?
+  \item How accurate the estimation of the cost factors? How would this affect the accuracy of the execution cost estimation?
 \end{itemize}
 
-The section starts with descriptive statistics of the stocks in the sample portfolio, along with trading mechanism of the NASDAQ exchange. We then proceed to present the estimation method from public data, along with corresponding estimates and their variances. We perform sensitivity analysis with respect to three main cost factors:
+This section starts with the descriptive statistics of the stocks in the sample portfolio, along with the trading mechanism of the NASDAQ exchange. We then proceed to present the estimation method from public data, along with corresponding estimates and their variances. We perform sensitivity analysis with respect to three main cost factors:
 \begin{itemize}
   \item Cost of trading in the opening auction.
   \item Cost of trading in the continuous auction.
@@ -434,9 +435,9 @@ We conclude the section with the summary of the sensitivity analysis, and the op
 
 \subsection{Data and market mechanism}
 
-We use equity data from NASDAQ exchange in this study, which has operating mechanism resembling our model. Opening auction in NASDAQ is called \textbf{Opening Cross}. While similar to the general call auction described in our model, there are certain subtle difference between our model and the NASDAQ's Opening Cross:
+We use equity data from NASDAQ exchange in this study, which has operating mechanism resembling our theoretical model. Opening auction in NASDAQ is called \textbf{Opening Cross}. While similar to the general call auction described in our model, there are certain subtle difference between our model and the NASDAQ's Opening Cross:
 \begin{itemize}
-  \item Before the opening bell at 9:30 EST, NASDAQ allows investors to submit orders to two different books: a continuous book and an opening cross book. Orders submitted to the continuous book will be matched immediately and disseminate in the market data feed. Orders submitted to the opening cross book will be withheld to be matched later and are not visible in the market data feed.
+  \item Before the opening bell at 9:30 EST, NASDAQ allows investors to submit orders to two different books: a continuous book and an opening cross book. Orders submitted to the continuous book will be matched immediately and the matching information will be visible in the market data feed. Orders submitted to the opening cross book will be withheld to be matched later and are not visible in the market data feed.
   \item At 9:30 EST, the opening cross book and the continuous book will be merged together to form a single book, and a Opening Cross price will be calculated based on the following three rules, similar to our Walrasian matching rule:
         \begin{itemize}
           \item Maximize the number of shares executed.
@@ -473,7 +474,7 @@ In the following, we describe how those factors can be estimated from market dat
 
 \subsubsection{Estimation of opening auction's cost factor $\alpha$}
 
-As mentioned, NASDAQ does not publish order imbalance before market opening, but we can derive the cost factor $\alpha$ from the matching quantity and the opening bid-ask spread. Recall from Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}) that the market maker will be incentivized to provide the offseting liqudity $V_e$ for market to open, with price sensitivity coefficient $b_e$. The market maker will then need to make a spread of $\zeta_e$ to realize his expected profit from $V_e$. Assuming his price sensitivity coefficient $b_e$ does not change after market opening, we can estimate $b_e$ based on Equation (\ref{eqn:expected_spread}) as
+As mentioned, NASDAQ does not publish order imbalance before market opening, but we can derive the cost factor $\alpha$ from the matching quantity and the opening bid-ask spread. Recall from Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}) that the market maker will be incentivized to provide the offseting liquidity $V_e$ for market to open, with price sensitivity coefficient $b_e$. The market maker will then need to make a spread of $\zeta_e$ to realize his expected profit from $V_e$. Assuming his price sensitivity coefficient $b_e$ does not change after market opening, we can estimate $b_e$ based on Equation (\ref{eqn:expected_spread}) as
 \[
   \hat{b_e} = \frac{\bar{V_e}}{\bar{\zeta_e}}
 \]
@@ -585,7 +586,7 @@ Based on the cost factor estimates per volatility group, table (\ref{tbl:param_e
 
 The estimates in each group are positive and within a reasonable range to each other. This suggests that the estimation methods are robust to the choice of instruments. We also observe that:
 \begin{itemize}
-  \item The estimates of $log \alpha$ and $log \beta$ are in similar range. This suggests that our estimation of the auction cost factor from spread and auction matching quantity concurs with the cost implied in the liquidity posted in the continous trading book. In other words, we expect market makers to have consistent pricing across sessions, so $\alpha$ and $\beta$ should have similar values across volatility groups.
+  \item The estimates of $log \alpha$ and $log \beta$ are in similar range. This suggests that our estimation of the auction cost factor from spread and auction matching quantity concurs with the cost implied in the liquidity posted in the continuous trading book. In other words, we expect the market maker to have consistent estimation of fair values across trading sessions, so $\alpha$ and $\beta$ should have similar values across volatility groups.
   \item The estimates of $log \rho$ are similar across volatility groups. This suggests that the recovery rate of the market impact during the auction matching is consistent across stocks and volatility bands.
 \end{itemize}
 
@@ -602,7 +603,7 @@ We then proceed to calculate the execution cost of each group using the followin
         \[
           C_2 = \frac{Q_0 (2 Q_0 T \beta + \frac{1-e^{-T \rho} T V_e \alpha}{\rho})}{2 T^2}
         \]
-  \item Optimal cost ($C_3$): the total cost of executing the optimal strategy in both the opening auction and the continous session. The formula is:
+  \item Optimal cost ($C_3$): the total cost of executing the optimal strategy in both the opening auction and the continuous session. The formula is:
         \[
           C_3 = B_0^3 \alpha + A^2 T \beta + \frac{A (1-e^{-T \rho}) V_e \alpha}{2 \rho} - \frac{B_0 e^{-T \rho} (B_0 + 2 V_e) \alpha^2 \sinh(T \rho)}{16 \beta \rho}
         \]
@@ -614,7 +615,7 @@ We then proceed to calculate the execution cost of each group using the followin
         \[
           C_4 = B_0^2 \alpha
         \]
-  \item Continous optimal cost ($C_5$): the cost of executing the optimal strategy in the continous session. The formula is:
+  \item Continous optimal cost ($C_5$): the cost of executing the optimal strategy in the continuous session. The formula is:
         \[
           C_5 = C_3 - C4
         \]
@@ -628,11 +629,11 @@ The results are reported in Table (\ref{tbl:cost_report}). We can observe that:
 \begin{itemize}
   \item The square-root law cost ($C_1$), the TWAP strategy's cost ($C_2$) and the optimal strategy's cost are on similar scale. This suggests our cost measures concurs with the square-root law of market impact. We can see that $C_2$ increases proportionally with the square-root cost, as the volatility increases. This suggests the more volatile a stock is, the higher its cost of aggressing the book.
   \item The difference between the square-root law cost ($C_1$) and the TWAP strategy's cost ($C_2$) widens significantly as volatility increases, even with constant $c$ in the square-root law adjusted. This implies that there is an additional component in the square-root law cost that is not captured in our formula. We hypothesizes that this is the permanent impact that moves the fundamental price up as we buy and down as we sell (See, for example, \cite{Kyle1985}). However, as shown in (\cite{Almgren2000}), this component is not optimizable.
-  \item The improvement is significant across the volatility groups. This makes sense as the opening auction's pricing is similar to the continuous auction's pricing. Therefore, the opening auction provides an alternative venue to take liqudity from. By balancing his trades across two auctions, the liqudity trader can get cheaper pricing for his trades. 
-  \item The optimal cost does not increase as much as the TWAP cost when volatility increases. Examining the auction proportion of the optimal cost, we can see the reason: the optimal strategy allocates the rising cost to the auction trade. The cost of trading in auction is consistently lower than continuous trading phase in (\ref{tbl:param_estimates}). Therefore, by allocate more shares to be execute in the auction, the optimal strateyg lowers the rate of increase in cost compared to the TWAP strategy. The continuous portion of the optimal cost stays almost constant across volatility groups.
+  \item The improvement is significant across the volatility groups. This makes sense as the opening auction's pricing is similar to the continuous auction's pricing. Therefore, the opening auction provides an alternative venue to take liquidity from. By balancing his trades across two auctions, the liquidity trader can get cheaper pricing for his trades. 
+  \item The optimal cost does not increase as much as the TWAP cost when volatility increases. Examining the auction proportion of the optimal cost, we can see the reason: the optimal strategy allocates the rising cost to the auction trade. The cost of trading in auction is consistently lower than continuous trading phase in (\ref{tbl:param_estimates}). Therefore, by allocate more shares to be execute in the auction, the optimal strategy lowers the rate of increase in cost compared to the TWAP strategy. The continuous portion of the optimal cost stays almost constant across volatility groups.
 \end{itemize}
 
-From those observations, we can see that the optimal strategy does not only lower the cost of trading compared to the TWAP strategy, but also help stablize cost among different volatility regimes. Therefore, the liqudity trader can achieve better control of his cost, as the optimal strategy is balanced against volatility.
+From those observations, we can see that the optimal strategy does not only lower the cost of trading compared to the TWAP strategy, but also help stablize cost among different volatility regimes. Therefore, the liquidity trader can achieve better control of his cost, as the optimal strategy is balanced against volatility.
 
 \input{\OptimalAuctionPath/tables/costTable}
 
