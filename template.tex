@@ -20,6 +20,7 @@
 \usepackage{systeme}
 \usepackage{algorithmic}
 \usepackage[thinc]{esdiff}
+\usepackage{xcolor}
 
 \graphicspath{ {./images/} }
 
@@ -28,7 +29,7 @@
 \newcommand{\numberOfStocks}{350}
 \newcommand*{\OptimalAuctionPath}{}%
 
-\title{Optimal liquidation strategy in a mixed auction market}
+\title{Optimal liquidation strategy in a mixed auction markets}
 
 \author{
  Hoang Hai Tran\\
@@ -49,12 +50,13 @@
 \begin{document}
 \maketitle
 
-\begin{abstract}
-  We analyze the price impact of trading in a mixed auction market, in which the exchange employs both call auction and continuous auction. Based on a multiplayer game settings between a market maker and one or more liquidity takers, we derive a market impact model which characterizes both instantaneous and temporary price impact. The unified model shows how price discovery and market impact transit from the call auction to the continuous auction. Moreover, we provide an optimal trading strategy with closed-form solution to execute a large order utilizing both auctions. The optimal trading strategy is numerically demonstrated with the cost efficiency of trading in both auctions compared to alternative only in the continuous trading auction.
-\end{abstract}
+\input{tex/abstract.tex}
 
-\input{tex/main.tex}
-\section{Appendix}
+\input{tex/intro.tex}
+\input{tex/analytical_framework.tex}
+\input{tex/application.tex}
+\input{tex/conclusion.tex}
+
 \input{tex/appendix.tex}
 
 \bibliographystyle{plain}

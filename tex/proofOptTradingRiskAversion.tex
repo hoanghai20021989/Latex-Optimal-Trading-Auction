@@ -1,0 +1,98 @@
+
+\begin{proof}[Derivation of the optimal trading strategy in a mixed auction market under risk aversion settings]\label{proof:optimal-strategy-mixed-auction-risk-aversion}
+  We have the cost equation as
+  \[
+    \alpha \nu^2 + \alpha \int_0^T \frac{\nu + V_e}{2} e^{- \rho s} \xi(s) ds + \beta \int_0^T \xi(s)^2 ds
+  \]
+
+  Now let assume the average variance of the stock during the continuous trading phase is $\sigma^2$, and the trader's risk aversion factor is $\gamma$. Using mean-variance maximization, we will have the objective function of the trader as:
+  \[
+    J = \underbrace{\alpha \nu^2 + \alpha \int_0^T \frac{\nu + V_e}{2} e^{- \rho s} \xi(s) ds + \beta \int_0^T \xi(s)^2 ds}_{\text{Mean}} + \frac{\gamma}{2} \underbrace{\int_0^T \sigma^2 \Xi(s)^2 ds}_{\text{Variance}}
+  \]
+  We need to find a tuple of $(\nu, \xi(t), \Xi(t))$ as a stationary point of the functional $J$. First we assume $\nu$ is constant, and solve for the optimal trading path during continuous trading phase given $\nu$:
+  \[
+    J_c = \alpha \int_0^T \frac{\nu + V_e}{2} e^{- \rho s} \xi(s) ds + \beta \int_0^T \xi(s)^2 ds + \frac{\gamma}{2} \int_0^T \sigma^2 \Xi(s)^2 ds
+  \]
+  The Euler-Lagrange equation of $J_c$ satisfies:
+  \begin{equation}
+    \begin{cases}
+      p'(t) =  \gamma \Xi(t) \sigma^2                          \\
+      p(t) = \frac{\nu + V_e}{2} e^{- \rho t} + 2 \xi(t) \beta \\
+      X(0) = x_0-\nu                                           \\
+      \Xi(t) = 0
+    \end{cases}
+  \end{equation}
+  Therefore, $\Xi(t)$ is the solution of the following non-homogeneous linear second-order ODE:
+  \begin{equation}\label{eqn:cont_obj_func}
+    \Xi(t)'' - k^2 \Xi(t) = \frac{\rho}{2\beta} \frac{\nu + V_e}{2} e^{- \rho t}
+  \end{equation}
+  where $k=\sqrt{\frac{\gamma \sigma^2}{2\beta}}$. The ODE has the solution in the form:
+  \begin{equation}\label{eqn:sln_form}
+    \Xi(t) = C_1 e^{k t} + C_2 e^{-k t} + C_3 e^{-\rho t}
+  \end{equation}
+  which can be solved using the boundary conditions
+  \begin{eqnarray}
+    \Xi[0] &=& C\\
+    \Xi[T] &=& 0
+  \end{eqnarray}
+  where $C=x_0-\nu$. To solve this, first we replace:
+  \[
+    \Xi''(t) = C_1 k^2 e^{k t} + C_2 k^2 e^{-k t} + C_3 \rho^2 e^{-\rho t}
+  \]
+  into Equation (\ref{eqn:cont_obj_func}), and consequently:
+  \begin{eqnarray}
+    (C_3 \rho^2 - k^2) e^{-\rho t} &=& \frac{\rho}{2\beta} \frac{\nu + V_e}{2} e^{- \rho t} \\
+    \Leftrightarrow C_3 &=& \frac{\nu + V_e}{4 \beta \rho} + \frac{k^2}{\rho^2}
+  \end{eqnarray}
+  so now we only need to find out $C_1$ and $C_2$ in terms of $C_3$. From the boundary conditions, we have:
+  \begin{eqnarray}
+    C_1 &=& -\frac{1}{2}(C + C_3(-1 + e^{T(k-\rho)})(-1 + \coth(k T)) \\
+    C_2 &=& \frac{1}{2}((C - C_3)e^{2kT} + C_3 e^{T(k-\rho)})(-1 + \coth(k T))
+  \end{eqnarray}
+  then by minimizing the objective functional $J$, we have:
+
+  \begin{eqnarray*}
+    \nu &=& \frac{E_{11}x_0 + E_{12} V + E_{13}}{E_2}
+  \end{eqnarray*}
+  where the coefficients $E_{11}$, $E_{12}$, $E_{13}$ and $E_{2}$ are:
+  \begin{eqnarray*}
+    E_{11} &=& \left(e^{\frac{k T}{\sqrt{2}}} K_1-e^{\frac{3 k T}{\sqrt{2}}} K_2+8 \sqrt{2} e^{T \left(\sqrt{2} k+\rho \right)} K_3-e^{\frac{k
+        T}{\sqrt{2}}+2 T \rho } K_4+e^{\frac{3 k T}{\sqrt{2}}+2 T \rho } K_5\right) \rho\\
+    E_{12} &=& 16 e^{\frac{k T}{\sqrt{2}}+T \rho } \beta ^2 \gamma  \rho ^4 \left(e^{T \left(\sqrt{2} k+\rho \right)} K_6+e^{T \rho } K_7-2 \sqrt{2}
+    e^{\frac{k T}{\sqrt{2}}} \alpha  \rho \right) \sigma ^2\\
+    E_{13} &=& 2 e^{\frac{k T}{\sqrt{2}}} K_{8} \left(-8 \sqrt{2} e^{\frac{k T}{\sqrt{2}}+T \rho } K_{10}+K_{9}\right) \gamma  \sigma\\
+    E_{2} &=& \rho (-D_1 e^{\frac{T \sqrt{\frac{\gamma  \sigma ^2}{\beta }}}{\sqrt{2}}}+D_2 e^{\frac{3 T \sqrt{\frac{\gamma  \sigma ^2}{\beta }}}{\sqrt{2}}}-8
+    \sqrt{2} D_3 e^{T \left(\rho +\sqrt{2} \sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)}\\
+    &\ & + (D_4+D_5+D_6+D_7) e^{2 T \rho
+        +\frac{T \sqrt{\frac{\gamma  \sigma ^2}{\beta }}}{\sqrt{2}}}+(D_{10}-D_{11}+D_8+D_9) e^{2 T \rho +\frac{3 T \sqrt{\frac{\gamma
+              \sigma ^2}{\beta }}}{\sqrt{2}}})\\
+    K_1 &=& \left(2 (-1+2 \alpha ) \beta  \rho ^2+\gamma  \sigma ^2\right) \left(2 k \beta  \rho ^2+\gamma  \left(k-2 \sqrt{2} \rho \right) \sigma ^2\right)\\
+    K_2 &=& \left(2 (-1+2 \alpha ) \beta  \rho ^2+\gamma  \sigma ^2\right) \left(2 k \beta  \rho ^2+\gamma  \left(k+2 \sqrt{2} \rho \right) \sigma ^2\right)\\
+    K_3 &=& \gamma  \rho  \sigma ^2 \left(2 \beta  \rho ^2 (-1+2 \alpha  (1+\beta  \rho ))+\gamma  \sigma ^2\right)\\
+    K_4 &=& 4 k (-1+2 \alpha ) \beta ^2 \rho ^4+4 \beta  \gamma  \rho ^2 \left(k (\alpha +4 \alpha  \beta  \rho )+\sqrt{2} \rho  (-1+2 \alpha +4 \alpha  \beta
+    \rho )\right) \sigma ^2+\gamma ^2 \left(k+2 \sqrt{2} \rho \right) \sigma ^4\\
+    K_5 &=& 4 k (-1+2 \alpha ) \beta ^2 \rho ^4+4 \beta  \gamma  \rho ^2 \left(\sqrt{2} \rho  (1-2 \alpha -4 \alpha  \beta  \rho )+k (\alpha +4 \alpha  \beta
+    \rho )\right) \sigma ^2+\gamma ^2 \left(k-2 \sqrt{2} \rho \right) \sigma ^4\\
+    K_6 &=& -k \alpha +\sqrt{2} \left(\rho  (\alpha +4 \beta  \rho )-2 \gamma  \sigma ^2\right)\\
+    K_7 &=& k \alpha +\sqrt{2} \left(\rho  (\alpha +4 \beta  \rho )-2 \gamma  \sigma ^2\right)\\
+    K_8 &=& 2 (-1+\alpha ) \beta  \rho ^2+\gamma  \sigma ^2\\
+    K_9 &=& \left(-1+e^{\sqrt{2} k T}\right) \left(-1+e^{2 T \rho }\right) k \left(2 \beta  \rho ^2+\gamma  \sigma ^2\right)\\
+    K_{10} &=& \gamma  \rho  \sigma ^2 \left(-1+\cosh\left[\frac{k T}{\sqrt{2}}\right] \cosh[T \rho ]\right)\\
+    D_1 &=& \left(2 \beta  \rho ^2 \sqrt{\frac{\gamma  \sigma ^2}{\beta }}+\gamma  \sigma ^2 \left(-2 \sqrt{2} \rho +\sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\right)
+    \left(2 (-1+2 \alpha ) \beta  \rho ^2+\gamma  \sigma ^2\right)\\
+    D_2 &=& \left(2 \beta  \rho ^2 \sqrt{\frac{\gamma  \sigma ^2}{\beta }}+\gamma  \sigma ^2 \left(2 \sqrt{2} \rho +\sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\right)
+    \left(2 (-1+2 \alpha ) \beta  \rho ^2+\gamma  \sigma ^2\right)\\
+    D_3 &=& \gamma  \rho  \sigma ^2 \left(2 \beta  \rho ^2 (-1+\alpha  (2+4 \beta  \rho ))+\gamma  \sigma ^2\right) \\
+    D_4 &=& \gamma ^2 \sigma ^4 \left(2 \sqrt{2} \rho +\sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\\
+    D_5 &=& \gamma ^2 \sigma ^4 \left(2 \sqrt{2} \rho +\sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\\
+    D_6 &=& \left(\sqrt{2} (-1+2 \alpha ) \rho +\alpha  \sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right) 4 \beta  \gamma  \rho ^2 \sigma ^2\\
+    D_7 &=& 4 \beta ^2 \rho ^3 \left(-8 \sqrt{2} \gamma ^2 \sigma ^4-\rho  \sqrt{\frac{\gamma  \sigma ^2}{\beta }}+2 \alpha  \rho  \sqrt{\frac{\gamma  \sigma
+        ^2}{\beta }}+8 \alpha  \gamma  \sigma ^2 \left(\sqrt{2} \rho +3 \sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\right)\\
+    D_8 &=& 4 \beta  \gamma  \rho ^2 \sigma ^2 \left(\sqrt{2} (-1+2 \alpha ) \rho -\alpha  \sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\\
+    D_9 &=& 4 \beta ^2 \rho ^3 \left(-8 \sqrt{2} \gamma ^2 \sigma ^4+\rho  \sqrt{\frac{\gamma  \sigma ^2}{\beta }}-2 \alpha  \left(-4 \sqrt{2} \gamma  \rho
+      \sigma ^2+\rho  \sqrt{\frac{\gamma  \sigma ^2}{\beta }}+12 \beta  \left(\frac{\gamma  \sigma ^2}{\beta }\right)^{3/2}\right)\right)\\
+    D_{10} &=& \gamma ^2 \sigma ^4 \left(2 \sqrt{2} \rho +\sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)\\
+    D_{11} &=& \gamma ^2 \sigma ^4 \left(-2 \sqrt{2} \rho +\sqrt{\frac{\gamma  \sigma ^2}{\beta }}\right)
+  \end{eqnarray*}
+
+\end{proof}
