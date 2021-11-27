@@ -36,18 +36,18 @@ While the presence of the continuous book during the call auction period deviate
 
 The continuous auction in the NASDAQ exchange, on the other hand, is similar to our model.
 
-Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock. Given the dataset of 3500 NASDAQ-listed stocks, we pick $200$ random stocks with the following constraints:
+Our data is captured directly from NASDAQ's ITCH-TotalView market data feed, provided by the National University of Singapore. The data contains all the add, modification, trade and delete for each order submitted to the continuous book, with fields indicating whether it is a buy or sell order. The data also contains the matching quantity and the Nasdaq Official Opening Price (NOOP) for each stock. Given the NASDAQ-listed stocks, we pick $200$ stocks with the following constraints:
 \begin{itemize}
   \item Since we do not account for the value of the queue priority in our market maker's modelling, we avoid selecting stocks with tick size higher than 10 basis points in our sample.
   \item We avoid low liquidity stock by selecting ones higher than 10M daily traded notional, which is roughly the first quartile of our sample.
 \end{itemize}
 
-Given those constraints, we use 1 week of data, from 01/10/2019 to 07/10/2019, in our empirical analysis. Since we only account for the market impact of the opening auction in our analysis, we use the data from 9:30 AM to 12:30 AM in our derivation. Due to the limited number of observations per stock, with only one opening auction a day, we group stocks by their relative volatility to improve the accuracy of the estimations. As shown in subsequent analysis, those metrics capture the variance in our cost factors. The descriptive statistics of the data is in Table (\ref{tbl:stock_desc}). From the statistics, we can see that the sample represents a reasonable range of stocks in terms of traded volume and tick size.
+We use 1 week of data, from 01/10/2019 to 07/10/2019, in the empirical analysis. Since we only account for the market impact of the opening auction in our analysis, we use the data from 9:30 AM to 12:30 AM in our derivation. Due to the limited number of observations per stock, with only one opening auction a day, we group stocks by their relative volatility to improve the accuracy of the estimations. As shown in subsequent analysis, those metrics capture the variance in our cost factors. The descriptive statistics of the data is in Table (\ref{tbl:stock_desc}). From the statistics, we can see that the sample represents a reasonable range of stocks in terms of traded volume and tick size.
 
 \input{tables/stockDescTable}
 
 \subsection{Estimation method}
-In order to estimate the cost of trading, we need to estimate three factors:
+In order to calculate the cost of trading, we need to estimate three factors:
 
 \begin{itemize}
   \item The temporary book aggressing cost factor $\alpha$ before market opening in Equation (\ref{eqn:mm_eval_eqb})
@@ -63,18 +63,14 @@ As mentioned, NASDAQ does not publish order imbalance before market opening, but
 \[
   \hat{b_e} = \frac{\bar{V_e}}{\bar{\zeta_e}}
 \]
-where
-\begin{itemize}
-  \item $\bar{V_e}$ is the average matching volume at the open.
-  \item $\bar{\zeta_e}$ is the average spread at the open.
-\end{itemize}
+where $\bar{V_e}$ is the average matching volume at the open, and $\bar{\zeta_e}$ is the average spread at the open.
 
 The estimation of cost factor $\alpha$ will then be
 \[
   \hat{\alpha} = \frac{1}{\hat{b_e}}  = \frac{\bar{\zeta_e}}{\bar{V_e}}
 \]
 
-It should be noted that both $V_e$ and $\zeta_e$ are random variables, hence makes the measurement of the cost factor $\alpha$ follow a ratio distribution. Ratio distribution often is heavy-tailed and has high variance. For example, assuming that $V_e$ and $\zeta_e$ follow independent normal distribution with zero means, then $\alpha$ will follows Cauchy distribution, with both its expected value and variance undefined (\cite{Geary1930}). In reality, we expect $V_e$ and $\zeta_e$ to be both correlated and noncentral, making the exact distribution of $\alpha$ even more complicated. To mediate this, we use the log transformation of the ratio in our subsequent analysis. The rationale, according to (\cite{Katz1978}), is as follows:
+Both $V_e$ and $\zeta_e$ are random variables, hence the measurement of the cost factor $\alpha$ follow a ratio distribution. Ratio distribution often is heavy-tailed and has high variance. For example, assuming that $V_e$ and $\zeta_e$ follow independent Gaussian distribution with zero means, then $\alpha$ will follows Cauchy distribution, with both its expected value and variance undefined (\cite{Geary1930}). In reality, we expect $V_e$ and $\zeta_e$ to be both correlated and noncentral, making the exact distribution of $\alpha$ even more complicated. To mediate this, we use the log transformation of the ratio. The rationale, according to (\cite{Katz1978}), is as follows:
 
 Let assume $V_e$ and $\zeta_e$ to be correlated noncentral normal random variables. The cost ratio $\alpha$ then can be expressed as:
 \[ \alpha \sim \frac{\mu_{\zeta_e} + \mathbb{N}(0, \sigma_{\zeta_e}^2 )}{\mu_{V_e} + \mathbb{N}(0, \sigma_{V_e}^2 )}
@@ -94,17 +90,16 @@ then asymptotically
   \sim \log \left(\frac{\mu_{\zeta_e}}{\mu_{V_e}} \right) + \mathbb{N} \left( 0, \frac{\sigma_{\zeta_e}^2}{\mu_{\zeta_e}^2} + \frac{\sigma_{V_e}^2}{\mu_{V_e}^2} \right)
 \]
 
-In other words, the log transformation allows us to consider the cost factor $\alpha$ approximately a Gaussian distributed random variable.
+which allows to consider the cost factor $\alpha$ approximately a Gaussian distributed random variable.
 
 \subsubsection{Estimation of continuous auction's cost factor $\beta$}
 
-Equation (\ref{eqn:markup_px_cont}) allows us to estimate cost factor $\beta$ directly from the liquidity posted in the book, with a slight adjustment. Since Equation (\ref{eqn:markup_px_cont}) is in terms of average price, we need to convert the price of the book to average price from the best bid-offer level, as illustrated in Table (\ref{tbl:bookAvgPxConversion}). Given the cumulative sum quantity as the independent variable $X$ and the average price as dependent variable $Y$, we have the $\beta$ estimate in a linear regression equation
-
+We estimate cost factor $\beta$ directly from the liquidity posted in the book, with a slight adjustment. Since Equation (\ref{eqn:markup_px_cont}) is in terms of volume-weighted average price, we need to convert the price of the book to average price from the best bid-offer level. Given the cumulative sum quantity, denoted as $X$, and the average price, denoted as $Y$, $\beta$ is the slope in alinear regression
 \[
   Y_t = const + \beta * X_t + e_t
 \]
 
-One caveat is the period of observation for the regression. Given the discussion in Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), we would want to avoid the transition period immediately after the opening. To identify this period, we perform two-sample t-test on consecutive 5-minute bin of data to determine if the average spread has stabilize. Specifically, given $\zeta_t$ as the average spread of the current bin and $\zeta_{t+1}$ as the average spread of the next 5-minute bin, the null hypothesis is:
+One caveat is the sampling period of observation for the regression. Given the spillover effect discussion in Subsection (\ref{subsec:AnalyticalFrameworkTransitionPeriod}), one should avoid the transition period immediately after the opening. To identify this period, we perform two-sample t-test on consecutive 5-minute bins of data to determine if the average spread is stabilized. Specifically, given $\zeta_t$ as the average spread of the current bin and $\zeta_{t+1}$ as the average spread of the next 5-minute bin, the null hypothesis is:
 \[
   H_0: \zeta_t = \zeta_{t+1}
 \]
@@ -112,22 +107,7 @@ where the sample statistics of the spread mean is calculated as
 \[
   \bar{\zeta_t} = \frac{\sum_{i=1}^N  \sum_{j=1}^5 \zeta_{ij}}{N*5}
 \]
-where $N$ is the number of days in our sample, and we measure the spread $\zeta_{ij}$ every 1 minute in each of the 5-minute bin. When we find the first 5-minute bin that we cannot reject the null hypothesis at $5 \%$ confidence level, we use the data in the bin as data for the regression. The sample statistics for $X$ and $Y$ is estimated similarly to the spread mean, where we bootstrap the average of 1-minute interval spread and cumulative sum quantity of the bin as sample data point. Furthermore, we use the data in the identified transition period to measure the recovery speed of the spread in the next subsection.
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{c|c|c|c|l}
-    \hline
-    \textbf{Buy} & \textbf{Price} & \textbf{Sell} & \textbf{Sum} & \multicolumn{1}{c}{\textbf{Average Price}} \\ \hline
-                 & 56             & 4000          & 14000        & 55.286                                     \\ \hline
-                 & 55             & 10000         & 10000        & 55                                         \\ \hline
-    900          & 54             &               & 900          & 54                                         \\ \hline
-    100          & 53             &               & 1000         & 53.9                                       \\ \hline
-    4000         & 52             &               & 5000         & 52.317                                     \\ \hline
-  \end{tabular}
-  \caption{A sample orderbook with average price calculated for each level. For example, the average price of the offer level 56 is $(55*10000+56*4000)/14000 = 55.286$}.
-  \label{tbl:bookAvgPxConversion}
-\end{table}
+where $N$ is the number of days in our sample, and we measure the spread $\zeta_{ij}$ every 1 minute in each of the 5-minute bin. We use the first 5-min bin that is insignificant at $5 \%$ level for the regression. The sample statistics for $X$ and $Y$ is estimated similarly to the spread mean, where we bootstrap the average of 1-minute interval spread and cumulative sum quantity of the bin as sample data point. Furthermore, we use the data in the identified transition period to measure the recovery speed of the spread in the next subsection.
 
 \subsubsection{Estimation of spread recovery rate $\rho$}
 
@@ -135,45 +115,45 @@ Given the transition period, we measure the average spread on a 1-minute interva
 \[
   \bar{\zeta_j} = \frac{\sum_{i=1}^N p_i}{N}
 \]
-where $j$ is the index of 1-minute interval, and $N$ is number of days in our dataset. From the time series $p_j$ we can perform an exponential linear regression to estimate $\rho$. We consider the following exponential model:
+where $j$ is the index of 1-minute interval, and $N$ is number of days in our dataset. We consider the following exponential model to estimate the spread recovery rate $\rho$:
 \[
-  y = \rho e^{-\rho t}
+  \zeta_j = \rho e^{-\rho t}
 \]
-where the independent variable $t$ is number of seconds since market opening, and the dependent variable $y$ represented the average spread $\bar{\zeta_j}$.
+where the independent variable $t$ is number of seconds since market opening.
 
 \subsubsection{Data binning by volatility group}
 
-While the estimation method is straightforward, there is one observation of each factor per stock per day, and our data span only 1 week of trading. Consequently, the estimates for each stock may not be representative of the cost factors' expected values. To improve the accuracy of the estimates, we group the data by each stock's daily volatility, normalized as percentage of its average price. The correlation between volatility and $\alpha$, $\beta$ and $\rho$ are $28\%$, $48\%$ and $24\%$, respectively. From the correlation, we hypothesize that the stocks' parameters within the same volatility bin will have similar distribution. Formally, let $F_\alpha$, $F_\beta$ and $F_\rho$ be the log distribution of $\alpha$, $\beta$ and $\rho$, respectively:
+While the estimation method is straightforward, there is one estimator of each factor per stock per day, and our data span only 1 week of trading. Consequently, the estimates for each stock may not be representative of the cost factors' expected values. To improve the accuracy of the estimates, we group the data by each stock's daily volatility, normalized as percentage of its average price. The correlation between volatility and $\alpha$, $\beta$ and $\rho$ are $28\%$, $48\%$ and $24\%$, respectively. From the correlation, we hypothesize that the stocks' parameters within the same volatility bin will have similar distribution. Formally, let $F_\alpha$, $F_\beta$ and $F_\rho$ be the log distribution of $\alpha$, $\beta$ and $\rho$, respectively:
 \[
-  log^* \alpha \sim F_\alpha(\mu_\alpha,\sigma_\alpha|v)
+  log \alpha^* \sim F_\alpha(\mu_\alpha,\sigma_\alpha|v)
 \]
 \[
-  log^* \beta \sim F_\beta(\mu_\beta,\sigma_\beta|v)
+  log \beta^* \sim F_\beta(\mu_\beta,\sigma_\beta|v)
 \]
 \[
-  log^* \rho \sim F_\rho(\mu_\rho,\sigma_\rho|v)
+  log \rho^* \sim F_\rho(\mu_\rho,\sigma_\rho|v)
 \]
-where $(\mu_\alpha,\sigma_\alpha)$, $(\mu_\beta,\sigma_\beta)$ and $(\mu_\rho,\sigma_\rho)$ are the means and standard deviations of the log of cost factors $\alpha$, $\beta$ and $\rho$ per volatility group $v$, respectively. The ratios are expected to be all positive and skewed towards zero, so we use log-transformation to make the sample more symmetric. Let $log \alpha*$, $log \beta*$ and $log \rho*$ be the sample mean per stock:
+where $(\mu_\alpha,\sigma_\alpha)$, $(\mu_\beta,\sigma_\beta)$ and $(\mu_\rho,\sigma_\rho)$ are the means and standard deviations of the log of cost factors $\alpha$, $\beta$ and $\rho$ per volatility group $v$, respectively. The ratios are expected to be all positive and skewed towards zero, so we use log-transformation to make the sample more symmetric. Let $log \alpha^*$, $log \beta^*$ and $log \rho^*$ be the sample mean per stock:
 \[
-  log \alpha* = \sum_{i=1}^m \alpha_i/m
-\]
-\[
-  log \beta* = \sum_{i=1}^m \beta_i/m
+  log \alpha^* = \sum_{i=1}^m \alpha_i/m
 \]
 \[
-  log \rho* = \sum_{i=1}^m \rho_i/m
+  log \beta^* = \sum_{i=1}^m \beta_i/m
 \]
-where $m$ is number of observations per stock. Based on the Central Limit Theorem, we have $log \alpha*$, $log \beta*$ and $log \rho*$ converge to normal distribution with means approximating expected values of cost factors per volatility group. We test the convergence using the Jarque–Bera test (\cite{JarqueBera1980}), reported along with the log estimates in the subsequent result summary.
+\[
+  log \rho^* = \sum_{i=1}^m \rho_i/m
+\]
+where $m$ is number of observations per stock. Based on the Central Limit Theorem, we have $log \alpha^*$, $log \beta^*$ and $log \rho^*$ converge to normal distribution with means approximating expected values of cost factors per volatility group. We test the convergence using the Jarque–Bera test (\cite{JarqueBera1980}), reported along with the log estimates in the subsequent result summary.
 
 \subsection{Transaction cost summary}
 
-Based on the cost factor estimates per volatility group, table (\ref{tbl:param_estimates}) presents the estimates of the model for the group of stock based on daily volatility in our sample. In general, the estimates of cost factors per volatility group follows normal distribution with $5\%$ significance level. Therefore, we can assume that the estimates are representative of the expected cost factors per group.
-
-The estimates in each group are positive and within a reasonable range to each other. This suggests that the estimation methods are robust to the choice of instruments. We also observe that:
+Based on the cost factor estimates per volatility group, Table (\ref{tbl:param_estimates}) presents the estimates of the model for the group of stock based on daily volatility in our sample. The estimates in each group are positive and within a reasonable range to each other. This suggests that the estimation methods are robust to the choice of instruments. We also observe that:
 \begin{itemize}
   \item The estimates of $log \alpha$ and $log \beta$ are in similar range. This suggests that our estimation of the auction cost factor from spread and auction matching quantity concurs with the cost implied in the liquidity posted in the continuous trading book. In other words, we expect the market maker to have consistent estimation of fair values across trading sessions, so $\alpha$ and $\beta$ should have similar values across volatility groups.
   \item The estimates of $log \rho$ are similar across volatility groups. This suggests that the recovery rate of the market impact during the auction matching is consistent across stocks and volatility bands.
 \end{itemize}
+
+In general, the estimates of cost factors per volatility group follows normal distribution with $5\%$ significance level. The estimates are representative of the expected cost factors per group. It is consistent to the estimation settings and we consider there is little deviation from each other.
 
 \input{tables/paramsTable}
 
@@ -210,13 +190,15 @@ We then proceed to calculate the execution cost of each group using the followin
         \]
 \end{itemize}
 
-The results are reported in Table (\ref{tbl:cost_report}). We can observe that:
-\begin{itemize}
-  \item The square-root law cost ($SR$), the TWAP strategy's cost ($TWAP$) and the optimal strategy's cost are on similar scale. This suggests our cost measures concurs with the square-root law of market impact. We can see that $TWAP$ increases proportionally with the square-root cost, as the volatility increases. This suggests the more volatile a stock is, the higher its cost of aggressing the book.
-  \item The difference between the square-root law cost ($SR$) and the TWAP strategy's cost ($TWAP$) widens significantly as volatility increases, even with constant $c$ in the square-root law adjusted. This implies that there is an additional component in the square-root law cost that is not captured in our formula. We hypothesizes that this is the permanent impact that moves the fundamental price up as we buy and down as we sell (See, for example, \cite{Kyle1985}). However, as shown in (\cite{Almgren2000}), this component is not optimizable.
-  \item The improvement is significant across the volatility groups. This makes sense as the opening auction's pricing is similar to the continuous auction's pricing. Therefore, the opening auction provides an alternative venue to take liquidity from. By balancing his trades across two auctions, the liquidity trader can get cheaper pricing for his trades.
-  \item The optimal cost does not increase as much as the TWAP cost when volatility increases. Examining the auction proportion of the optimal cost, we can see the reason: the optimal strategy allocates the rising cost to the auction trade. The cost of trading in auction is consistently lower than continuous trading phase in (\ref{tbl:param_estimates}). Therefore, by allocate more shares to be execute in the auction, the optimal strategy lowers the rate of increase in cost compared to the TWAP strategy. The continuous portion of the optimal cost stays almost constant across volatility groups.
-\end{itemize}
+Table (\ref{tbl:cost_report}) presents the results. We can observe that:
+
+The square-root law cost ($SR$), the TWAP strategy's cost ($TWAP$) and the optimal strategy's cost are on similar scale. This suggests our cost measures concurs with the square-root law of market impact. We can see that $TWAP$ increases proportionally with the square-root cost, as the volatility increases. This suggests the more volatile a stock is, the higher its cost of aggressing the book.
+
+The difference between the square-root law cost ($SR$) and the TWAP strategy's cost ($TWAP$) widens significantly as volatility increases, even with constant $c$ in the square-root law adjusted. This implies that there is an additional component in the square-root law cost that is not captured in our formula. We hypothesizes that this is the permanent impact that moves the fundamental price up as we buy and down as we sell (See, for example, \cite{Kyle1985}). However, as shown in (\cite{Almgren2000}), this component is not optimizable.
+
+The improvement is significant across the volatility groups, ranging from $59.95 \%$ to $64.29 \%$ compared to TWAP cost, or from $3.52$ to $6.22$ in basis points. This makes sense as the opening auction's pricing is similar to the continuous auction's pricing. Therefore, the opening auction provides an alternative venue to take liquidity from. By balancing his trades across two auctions, the liquidity trader can get cheaper pricing for his trades.
+
+The optimal cost does not increase as much as the TWAP cost when volatility increases. Examining the auction proportion of the optimal cost, we can see the reason: the optimal strategy allocates the rising cost to the auction trade. The cost of trading in auction is consistently lower than continuous trading phase in (\ref{tbl:param_estimates}). Therefore, by allocate more shares to be execute in the auction, the optimal strategy lowers the rate of increase in cost compared to the TWAP strategy. The continuous portion of the optimal cost stays almost constant across volatility groups.
 
 From those observations, we can see that the optimal strategy does not only lower the cost of trading compared to the TWAP strategy, but also help stablize cost among different volatility regimes. Therefore, the liquidity trader can achieve better control of his cost, as the optimal strategy is balanced against volatility.
 
